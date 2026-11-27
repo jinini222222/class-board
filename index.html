@@ -101,12 +101,12 @@ body.peek .peek-tag{display:inline-block;position:absolute;top:-12px;right:14px;
 
 /* 시간표 */
 /* 시간표 칸 높이에 맞춰 다섯 줄이 딱 들어가도록 글자 크기를 칸 높이(cqh) 기준으로 정해요 */
-.plan{list-style:none;margin:0;padding:0;display:grid;grid-auto-rows:1fr;gap:1.6cqh;overflow:hidden;flex:1;min-height:0;container-type:size}
+.plan{list-style:none;margin:0;padding:0;display:grid;grid-auto-rows:1fr;gap:clamp(3px,.7vh,8px);overflow:hidden;flex:1;min-height:0;container-type:size}
 .row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:0 12px;min-height:0;overflow:hidden;border-radius:12px;border:2px solid var(--line)}
-.no{font-family:var(--f-display);font-size:clamp(12px,9cqh,40px);line-height:1.15;background:var(--mint-l);color:#24876a;border-radius:10px;padding:0 10px;text-align:center;white-space:nowrap}
-.subj{font-family:var(--f-display);font-size:clamp(14px,13.5cqh,76px);line-height:1.1;border:2px dashed transparent;border-radius:10px;background:transparent;padding:0 8px;width:100%;min-width:0}
+.no{font-family:var(--f-display);font-size:clamp(11px,calc(40cqh / var(--rows,5)),40px);line-height:1.1;background:var(--mint-l);color:#24876a;border-radius:10px;padding:0 10px;text-align:center;white-space:nowrap}
+.subj{font-family:var(--f-display);font-size:clamp(13px,calc(60cqh / var(--rows,5)),76px);line-height:1;border:2px dashed transparent;border-radius:10px;background:transparent;padding:0 8px;width:100%;min-width:0}
 .subj::placeholder{color:#c9c4d8}
-.times{display:flex;align-items:center;gap:2px;color:var(--soft);font-size:clamp(11px,8cqh,34px);font-variant-numeric:tabular-nums}
+.times{display:flex;align-items:center;gap:2px;color:var(--soft);font-size:clamp(10px,calc(34cqh / var(--rows,5)),34px);font-variant-numeric:tabular-nums}
 .tm{width:3.4em;text-align:center;border:2px dashed transparent;border-radius:8px;background:transparent;padding:1px 2px;color:var(--soft);font-variant-numeric:tabular-nums}
 .subj:hover,.tm:hover{border-color:var(--line)}
 .subj:focus,.tm:focus{outline:none;border-color:var(--mint);background:var(--paper)}
@@ -121,7 +121,20 @@ body.peek .peek-tag{display:inline-block;position:absolute;top:-12px;right:14px;
 .row.now .subj:focus{background:var(--paper)}
 .row.done{opacity:.45}
 .row.done:focus-within{opacity:1}
-.hint{font-size:clamp(10px,1.2vh,13px);color:var(--soft);text-align:right;margin-top:4px}
+.hint{font-size:clamp(10px,1.2vh,13px);color:var(--soft);text-align:right;margin-left:auto}
+.plan-foot{display:flex;align-items:center;gap:8px;margin-top:4px}
+.pd-panel{position:absolute;left:14px;bottom:44px;z-index:30;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 var(--ink),0 14px 30px rgba(59,53,80,.2);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.pd-panel b{font-family:var(--f-display);font-weight:400;font-size:20px}
+.pd-days{display:flex;gap:8px}
+.pd-day{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--f-display);font-size:18px}
+.pd-day select{font-family:var(--f-display);font-size:18px;border:2px solid var(--line);border-radius:10px;padding:3px 4px;background:var(--paper);color:var(--ink)}
+.pd-day select:focus-visible{outline:3px solid var(--sky)}
+.pd-note{font-size:13px;color:var(--soft);max-width:22em}
+#per-days[aria-expanded="true"]{background:var(--mint-l);border-color:var(--mint);color:var(--ink)}
+.plan-foot button{border:2px solid var(--line);background:var(--paper);border-radius:10px;padding:2px 10px;cursor:pointer;font-family:var(--f-display);font-size:clamp(11px,1.4vh,15px);color:var(--soft)}
+.plan-foot button:hover{border-color:var(--mint);color:var(--ink)}
+.plan-foot button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.plan-foot button.sure{background:var(--alert);border-color:var(--alert);color:#fff}
 .c-plan{padding-top:clamp(16px,2.4vh,26px);padding-bottom:clamp(8px,1.2vh,14px)}
 
 /* 칭찬 / 할 일 */
@@ -552,7 +565,8 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
     <section class="card c-plan">
       <span class="tape" id="plan-tape">오늘 시간표</span><span class="peek-tag">미리 입력 중</span>
       <ul class="plan" id="plan"></ul>
-      <div class="hint">과목과 시간을 눌러서 바로 고칠 수 있어요</div>
+      <div class="plan-foot"><button type="button" id="per-add">+ 교시 추가</button><button type="button" id="per-del">− 마지막 교시 빼기</button><button type="button" id="per-days" aria-expanded="false" aria-controls="pd-panel">요일별 교시</button><span class="hint">과목과 시간을 눌러서 바로 고칠 수 있어요</span></div>
+      <div class="pd-panel" id="pd-panel" role="dialog" aria-label="요일별 교시" hidden><b>요일마다 몇 교시까지 있나요?</b><div class="pd-days" id="pd-days"></div><div class="pd-note">시간표보다 많은 교시를 고르면 교시가 자동으로 추가돼요. 시간은 시간표에서 눌러서 고쳐 주세요.</div></div>
     </section>
   </div>
 
@@ -845,15 +859,27 @@ $('title-in').value=S.title;
 $('title-in').addEventListener('input',e=>{S.title=e.target.value;save()});
 
 /* ----- 시간표 (항상 바로 수정 가능) ----- */
+/* 요일별 교시: S.dayPeriods[요일] = 그날 마지막 교시 (없으면 시간표 전체) */
+if(!S.dayPeriods||typeof S.dayPeriods!=='object')S.dayPeriods={};
+function dayRows(wd){
+  const cls=S.rows.filter(r=>r.kind==='class'),n=Math.min(cls.length,S.dayPeriods[wd]||cls.length),last=cls[n-1];
+  return last?S.rows.slice(0,S.rows.indexOf(last)+1):[];
+}
 function renderPlan(){
   const wd=view.getDay();
   $('plan-tape').textContent=isToday()?`오늘 시간표 (${DAYS[wd]}요일)`:`${view.getMonth()+1}월 ${view.getDate()}일 (${DAYS[wd]}) 시간표`;
   const ul=$('plan');ul.innerHTML='';
+  const shown=new Set(dayRows(view.getDay()));
+  {/* 교시가 많아지면 시계 칸을 줄이고 시간표 칸을 키워서, 한 줄 높이와 글씨 크기를 5교시 때와 똑같이 유지해요 */
+    const n=Math.max(5,[...shown].filter(r=>r.kind==='class').length);
+    ul.style.setProperty('--rows',4.45*n/5);
+    const share=Math.min(.7,.4444*n/5);
+    document.querySelector('.c-plan').style.flex=String(1.25*share/(1-share));}
   if(wd===0||wd===6){ul.innerHTML='<li class="empty">쉬는 날이에요. 푹 쉬어요!</li>';return}
   const base=S.subjects[wd]||{}, own=day().subj=day().subj||{};
   const sub=new Proxy({},{get:(_,id)=>id in own?own[id]:(base[id]||''),set:(_,id,v)=>{own[id]=v;return true}});
   S.rows.forEach((r,i)=>{
-    if(r.kind!=='class')return;
+    if(r.kind!=='class'||!shown.has(r))return;
     const li=document.createElement('li');
     li.className='row'+(r.kind==='class'?'':' rest')+(r.kind==='lunch'?' lunch':'');
     li.dataset.i=i;
@@ -890,6 +916,50 @@ function highlight(){
     li.classList.toggle('done',on&&t>=toSec(r.e));
   });
 }
+
+/* ----- 교시 추가·빼기 ----- */
+(function(){
+  const pad=n=>String(n).padStart(2,'0');
+  const addMin=(hm,m)=>{const [h,mi]=hm.split(':').map(Number),t=Math.min(23*60+59,h*60+mi+m);return pad(Math.floor(t/60))+':'+pad(t%60)};
+  const cls=()=>S.rows.filter(r=>r.kind==='class');
+  $('per-add').addEventListener('click',()=>{
+    const c=cls();if(c.length>=7)return;
+    const last=c[c.length-1],n=c.length+1,uid=Date.now().toString(36);
+    const bs=last.e,st=addMin(bs,10),en=addMin(st,40);
+    /* 새 교시 앞에 10분 쉬는 시간을 넣어서 1분 전 예비종도 울려요 */
+    S.rows.push({id:'b'+uid,kind:'break',name:'쉬는 시간',s:bs,e:st},{id:'p'+uid,kind:'class',name:n+'교시',s:st,e:en});
+    save();renderPlan();
+  });
+  const del=$('per-del');let tm=null;
+  del.addEventListener('click',()=>{
+    const c=cls();if(c.length<=1)return;
+    if(!del.classList.contains('sure')){del.classList.add('sure');del.textContent=c[c.length-1].name+' 뺄까요? 한 번 더';tm=setTimeout(()=>{del.classList.remove('sure');del.textContent='− 마지막 교시 빼기'},2500);return}
+    clearTimeout(tm);del.classList.remove('sure');del.textContent='− 마지막 교시 빼기';
+    const i=S.rows.lastIndexOf(c[c.length-1]);S.rows.splice(i,1);
+    if(S.rows[i-1]&&S.rows[i-1].kind!=='class'&&S.rows[i-1].kind!=='lunch')S.rows.splice(i-1,1);
+    save();renderPlan();
+  });
+})();
+
+/* ----- 요일별 교시 설정 ----- */
+(function(){
+  const btn=$('per-days'),panel=$('pd-panel'),box=$('pd-days');
+  const total=()=>S.rows.filter(r=>r.kind==='class').length;
+  function paint(){
+    const t=total();
+    box.innerHTML=[1,2,3,4,5].map(d=>{const v=Math.min(S.dayPeriods[d]||t,7);
+      return `<label class="pd-day">${DAYS[d]}<select data-d="${d}" aria-label="${DAYS[d]}요일 교시 수">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}"${n===v?' selected':''}>${n}교시</option>`).join('')}</select></label>`}).join('');
+  }
+  const set=o=>{panel.hidden=!o;btn.setAttribute('aria-expanded',o);if(o)paint()};
+  btn.addEventListener('click',()=>set(panel.hidden));
+  document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==btn)set(false)});
+  box.addEventListener('change',e=>{
+    const sel=e.target.closest('select');if(!sel)return;
+    const d=+sel.dataset.d,n=+sel.value;
+    while(total()<n)$('per-add').click();     /* 모자란 교시는 자동으로 추가 */
+    S.dayPeriods[d]=n;save();renderPlan();lastMin=-1;
+  });
+})();
 
 /* ----- 칭찬 / 할 일 (같은 방식) ----- */
 const MARK={
@@ -1842,26 +1912,24 @@ function tick(){
   setH('time',`<span class="ampm">${h<12?'오전':'오후'}</span>${h%12||12}<span class="colon">:</span>${String(m).padStart(2,'0')}`);
   const t=h*3600+m*60+sec;
   let state='',sub='',warn=false;
-  const rows=S.rows.map(r=>({...r,a:toSec(r.s),b:toSec(r.e)}));
+  const rows=dayRows(wd).map(r=>({...r,a:toSec(r.s),b:toSec(r.e)}));
   const classes=rows.filter(r=>r.kind==='class');
   if(wd===0||wd===6){state='오늘은 쉬는 날';sub='즐거운 주말 보내요!'}
   else{
     const cur=rows.find(r=>t>=r.a&&t<r.b);
     const next=classes.find(r=>r.a>t);
+    /* 1분 전 예비종: 모든 교시 앞에 울려요. 단, 앞 교시와 쉬는 시간 없이 바로 이어지면(블록수업) 울리지 않아요 */
+    const ni=next?classes.indexOf(next):-1,prev=ni>0?classes[ni-1]:null;
+    const gap=next&&(!prev||prev.b<next.a);
+    const left=next?next.a-t:0;
     if(cur&&cur.kind==='class'){state='수업에 집중해요';sub=`${cur.name} · 끝날 때까지 <span class="left">${fmtLeft(cur.b-t)}</span>`}
-    else if(cur&&cur.kind==='break'&&next){
-      const left=next.a-t;
-      if(left<=60){warn=true;state='조용히 수업을 준비해요';sub=`${next.name} 시작까지 <span class="left">${left}초</span>`;
-        const k=now.toDateString()+cur.id;if(lastWarnKey!==k){lastWarnKey=k;if(left>=45)chime()}}
-      else{state='화장실 다녀오기<br>물 마시기';sub=`쉬는 시간 · ${next.name}까지 <span class="left">${fmtLeft(left)}</span>`;tickTock(t)}
+    else if(next&&gap&&left<=60){
+      warn=true;state='조용히 수업을 준비해요';sub=`${next.name} 시작까지 <span class="left">${left}초</span>`;
+      const k=now.toDateString()+next.id;if(lastWarnKey!==k){lastWarnKey=k;if(left>=45)chime()}
     }
-    else if(cur&&cur.kind==='lunch'){state='점심 시간';sub=next?`${next.name}까지 <span class="left">${fmtLeft(next.a-t)}</span>`:'맛있게 먹어요'}
-    else if(next&&t<classes[0].a&&next.a-t<=60){
-      /* 1교시 1분 전 예비종 */
-      warn=true;state='조용히 수업을 준비해요';sub=`${next.name} 시작까지 <span class="left">${next.a-t}초</span>`;
-      const k=now.toDateString()+'morning';if(lastWarnKey!==k){lastWarnKey=k;if(next.a-t>=45)chime()}
-    }
-    else if(next){state=t<classes[0].a?'아침 시간<span class="state-add">조용히 수업을 준비해요</span>':'잠깐 쉬어요';sub=`${next.name}까지 <span class="left">${fmtLeft(next.a-t)}</span>`}
+    else if(cur&&cur.kind==='break'&&next){state='화장실 다녀오기<br>물 마시기';sub=`쉬는 시간 · ${next.name}까지 <span class="left">${fmtLeft(left)}</span>`;tickTock(t)}
+    else if(cur&&cur.kind==='lunch'){state='점심 시간';sub=next?`${next.name}까지 <span class="left">${fmtLeft(left)}</span>`:'맛있게 먹어요'}
+    else if(next){state=t<classes[0].a?'아침 시간<span class="state-add">조용히 수업을 준비해요</span>':'잠깐 쉬어요';sub=`${next.name}까지 <span class="left">${fmtLeft(left)}</span>`}
     else{state='오늘 수업 끝!';sub='모두 수고했어요'}
   }
   $('clock').classList.toggle('warn',warn);
