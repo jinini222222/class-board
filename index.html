@@ -421,6 +421,12 @@ body.editing .board{background-image:linear-gradient(rgba(90,169,230,.12) 1px,tr
 .ed-free button{border:none;background:none;cursor:pointer;color:var(--soft);font-size:14px}
 .ed-free .ed-chip{padding:2px 8px;font-size:13px}
 .ed-add{border:2px dashed var(--line);background:none;border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;color:var(--soft)}
+.ed-sw{width:34px;height:34px;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 2px var(--line);cursor:pointer;padding:0}
+.ed-sw[aria-pressed="true"]{box-shadow:0 0 0 3px #5aa9e6;transform:scale(1.08)}
+.ed-pick{display:inline-flex;align-items:center;gap:6px;border:2px dashed var(--line);border-radius:999px;padding:3px 12px 3px 4px;cursor:pointer;font-family:var(--f-display);font-size:15px;color:var(--soft)}
+.ed-pick input{width:30px;height:30px;border:none;padding:0;background:none;cursor:pointer}
+body.no-dot{background-image:none}
+body.bg-dark .title,body.bg-dark .title input{color:#fff}
 .ed-acts{display:flex;gap:8px;justify-content:flex-end}
 .ed-acts button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:6px 16px;cursor:pointer;font-family:var(--f-display);font-size:17px;color:var(--ink)}
 .ed-acts .ed-save{background:#5cc96a;border-color:#3a9c47;color:#fff;box-shadow:0 3px 0 #3a9c47}
@@ -821,6 +827,9 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
     <div class="ed-group"><span class="ed-lab">게시판</span><div class="ed-chips" id="ed-main"></div></div>
     <div class="ed-group"><span class="ed-lab">자유게시판</span><div class="ed-chips" id="ed-free"></div><button type="button" class="ed-add" id="ed-free-add">+ 자유게시판 더하기</button></div>
     <div class="ed-group"><span class="ed-lab">도구</span><div class="ed-chips" id="ed-tools"></div></div>
+    <div class="ed-group"><span class="ed-lab">배경색</span><div class="ed-chips" id="ed-bg"></div>
+      <label class="ed-pick" title="원하는 색 고르기"><input type="color" id="ed-bg-pick" aria-label="원하는 배경색 고르기">원하는 색</label>
+      <button type="button" class="ed-chip" id="ed-dot" aria-pressed="true">점무늬</button></div>
   </div>
   <div class="ed-acts"><button type="button" id="ed-reset">처음 모양으로</button><button type="button" id="ed-cancel">취소</button><button type="button" class="ed-save" id="ed-save">이대로 저장</button></div>
 </div>
@@ -2004,7 +2013,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
   const DEFAULT=[{w:'clock',x:0,y:1.5,ww:60.6,hh:52},{w:'plan',x:0,y:57,ww:60.6,hh:43},{w:'praise',x:61.8,y:1.5,ww:38.2,hh:47},{w:'notice',x:61.8,y:52,ww:38.2,hh:48}];
   if(!Array.isArray(S.layout)||!S.layout.length)S.layout=JSON.parse(JSON.stringify(DEFAULT));
   if(!S.free||typeof S.free!=='object')S.free={};
-  let editing=false,work=null,backup=null;
+  let editing=false,work=null,backup=null,wbg={c:'#d8eefa',dot:true};
   const nameOf=w=>{const m=MAIN.find(x=>x[0]===w);if(m)return m[2];if(w.startsWith('tool:')){const t=TOOLS.find(x=>'tool:'+x[0]===w);return t?t[2]:w}
     if(w.startsWith('free:'))return (S.free[w.slice(5)]||{}).t||'자유게시판';return w};
   const elFor=w=>{const m=MAIN.find(x=>x[0]===w);if(m)return $(m[1]);return board.querySelector(`[data-wid="${CSS.escape(w)}"]`)};
@@ -2097,7 +2106,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
     apply(work);chips();
   }
   bar.addEventListener('click',e=>{
-    const c=e.target.closest('.ed-chip');if(c){toggle(c.dataset.w);return}
+    const c=e.target.closest('.ed-chip[data-w]');if(c){toggle(c.dataset.w);return}
     const d=e.target.closest('[data-del]');if(d){const id=d.dataset.del;work=work.filter(x=>x.w!=='free:'+id);delete S.free[id];apply(work);chips();return}
   });
   bar.addEventListener('input',e=>{const inp=e.target.closest('input[data-id]');if(!inp)return;S.free[inp.dataset.id].t=inp.value||'자유게시판';
@@ -2105,17 +2114,36 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
     board.querySelectorAll(`.ed-cover[data-w="free:${inp.dataset.id}"] .ed-name`).forEach(t=>t.textContent=S.free[inp.dataset.id].t)});
   $('ed-min').addEventListener('click',()=>{const m=bar.classList.toggle('min');$('ed-min').textContent=m?'펼치기 ▲':'접기 ▼';$('ed-min').setAttribute('aria-expanded',!m)});
   $('ed-free-add').addEventListener('click',()=>{const id=Date.now().toString(36);S.free[id]={t:'자유게시판',html:''};toggle('free:'+id)});
+  /* --- 배경색 --- */
+  const BGS=[['#d8eefa','하늘'],['#d6f3e6','민트'],['#fde2ea','분홍'],['#fff3c4','레몬'],['#e8e0fb','보라'],['#ffe2cc','살구'],['#e4f4cf','연두'],['#f6f1e7','크림'],['#2f5d50','칠판'],['#3b3550','밤하늘']];
+  const BG0={c:'#d8eefa',dot:true};
+  const hex2=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+  function paintBg(b){
+    b=b||BG0;const [r,g,bl]=hex2(b.c);const lum=(.299*r+.587*g+.114*bl)/255;
+    const k=lum>.5?.9:1.25,dot='#'+[r,g,bl].map(v=>Math.max(0,Math.min(255,Math.round(v*k+(lum>.5?0:12)))).toString(16).padStart(2,'0')).join('');
+    const st=document.documentElement.style;st.setProperty('--board',b.c);st.setProperty('--dot',dot);
+    document.body.classList.toggle('no-dot',!b.dot);document.body.classList.toggle('bg-dark',lum<=.5);
+  }
+  function bgChips(){
+    const b=wbg;
+    $('ed-bg').innerHTML=BGS.map(([c,n])=>`<button type="button" class="ed-sw" data-c="${c}" title="${n}" aria-label="${n}" style="background:${c}" aria-pressed="${c===b.c}"></button>`).join('');
+    $('ed-bg-pick').value=b.c;$('ed-dot').setAttribute('aria-pressed',String(!!b.dot));
+  }
+  $('ed-bg').addEventListener('click',e=>{const t=e.target.closest('.ed-sw');if(!t)return;wbg.c=t.dataset.c;paintBg(wbg);bgChips()});
+  $('ed-bg-pick').addEventListener('input',e=>{wbg.c=e.target.value;paintBg(wbg);bgChips()});
+  $('ed-dot').addEventListener('click',()=>{wbg.dot=!wbg.dot;paintBg(wbg);bgChips()});
+  try{paintBg(S.bg)}catch(e){}
   const reset=$('ed-reset');let rt=null;
   reset.addEventListener('click',()=>{if(!reset.classList.contains('sure')){reset.classList.add('sure');reset.textContent='한 번 더 누르면 처음 모양';rt=setTimeout(()=>{reset.classList.remove('sure');reset.textContent='처음 모양으로'},2500);return}
-    clearTimeout(rt);reset.classList.remove('sure');reset.textContent='처음 모양으로';work=JSON.parse(JSON.stringify(DEFAULT));apply(work);chips()});
+    clearTimeout(rt);reset.classList.remove('sure');reset.textContent='처음 모양으로';{wbg={...BG0};work=JSON.parse(JSON.stringify(DEFAULT))}paintBg(wbg);apply(work);chips();bgChips()});
   function start(){
     if(editing)return;editing=true;backup={layout:JSON.parse(JSON.stringify(S.layout)),free:JSON.parse(JSON.stringify(S.free))};
-    work=JSON.parse(JSON.stringify(S.layout));document.body.classList.add('editing');bar.hidden=false;chips();apply(work);
+    work=JSON.parse(JSON.stringify(S.layout));wbg={...BG0,...(S.bg||{})};document.body.classList.add('editing');bar.hidden=false;chips();bgChips();apply(work);
   }
   function stop(){editing=false;document.body.classList.remove('editing');bar.hidden=true;board.querySelectorAll('.ed-cover').forEach(c=>c.remove())}
   $('set-btn').addEventListener('click',()=>editing?null:start());
-  $('ed-cancel').addEventListener('click',()=>{S.layout=backup.layout;S.free=backup.free;stop();apply(S.layout)});
-  $('ed-save').addEventListener('click',()=>{S.layout=work.map(i=>({...i}));save();stop();apply(S.layout)});
+  $('ed-cancel').addEventListener('click',()=>{S.layout=backup.layout;S.free=backup.free;stop();paintBg(S.bg);apply(S.layout)});
+  $('ed-save').addEventListener('click',()=>{S.bg={...wbg};S.layout=work.map(i=>({...i}));save();stop();apply(S.layout)});
   /* 끌어서 옮기기 · 오른쪽 아래 모서리로 크기 바꾸기 (5% 칸에 맞춰요) */
   let dg=null;const snap=v=>Math.round(v*2)/2;
   board.addEventListener('pointerdown',e=>{
