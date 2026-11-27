@@ -116,6 +116,11 @@ body.peek .peek-tag{display:inline-block;position:absolute;top:-12px;right:14px;
 .row.rest{padding-block:0}
 .row.rest .subj{font-size:clamp(12px,1.6vh,17px);color:var(--soft);font-family:var(--f-body)}
 .row.lunch .no{color:#e8891f}
+.row.lunch-row{background:#fff7ec;border-color:#ffd9a8}
+.row.lunch-row .no{background:#ffe3c2;color:#c06a12}
+.row.lunch-row .subj{color:#c06a12;padding:0 8px}
+.row.lunch-row.now{background:#ffe8cc;border-color:#ffb361}
+.row.lunch-row.now .no{background:#ffb361;color:#fff}
 .row.now{background:var(--mint-l);border-color:var(--mint)}
 .row.now .no{background:var(--mint);color:#fff}
 .row.now .subj:focus{background:var(--paper)}
@@ -624,7 +629,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
     <section class="card c-plan" id="w-plan">
       <span class="tape" id="plan-tape">오늘 시간표</span><span class="peek-tag">미리 입력 중</span>
       <ul class="plan" id="plan"></ul>
-      <div class="plan-foot"><button type="button" id="per-add">+ 교시 추가</button><button type="button" id="per-del">− 마지막 교시 빼기</button><button type="button" id="per-days" aria-expanded="false" aria-controls="pd-panel">요일별 교시</button><span class="hint">과목과 시간을 눌러서 바로 고칠 수 있어요</span></div>
+      <div class="plan-foot"><button type="button" id="per-add">+ 교시 추가</button><button type="button" id="per-del">− 마지막 교시 빼기</button><button type="button" id="per-days" aria-expanded="false" aria-controls="pd-panel">요일별 교시</button><button type="button" id="per-lunch">+ 점심시간</button><span class="hint">과목과 시간을 눌러서 바로 고칠 수 있어요</span></div>
       <div class="pd-panel" id="pd-panel" role="dialog" aria-label="요일별 교시" hidden><b>요일마다 몇 교시까지 있나요?</b><div class="pd-days" id="pd-days"></div><div class="pd-note">시간표보다 많은 교시를 고르면 교시가 자동으로 추가돼요. 시간은 시간표에서 눌러서 고쳐 주세요.</div></div>
     </section>
     <section class="card c-praise" id="w-praise">
@@ -939,7 +944,7 @@ function renderPlan(){
   const ul=$('plan');ul.innerHTML='';
   const shown=new Set(dayRows(view.getDay()));
   {/* 교시가 많아지면 시계 칸을 줄이고 시간표 칸을 키워서, 한 줄 높이와 글씨 크기를 5교시 때와 똑같이 유지해요 */
-    const n=Math.max(5,[...shown].filter(r=>r.kind==='class').length);
+    const n=Math.max(5,[...shown].filter(r=>r.kind==='class'||(r.kind==='lunch'&&S.showLunch)).length);
     ul.style.setProperty('--rows',4.45*n/5);
     const share=Math.min(.7,.4444*n/5);
     document.querySelector('.c-plan').style.flex=String(1.25*share/(1-share));}
@@ -947,14 +952,14 @@ function renderPlan(){
   const base=S.subjects[wd]||{}, own=day().subj=day().subj||{};
   const sub=new Proxy({},{get:(_,id)=>id in own?own[id]:(base[id]||''),set:(_,id,v)=>{own[id]=v;return true}});
   S.rows.forEach((r,i)=>{
-    if(r.kind!=='class'||!shown.has(r))return;
+    if(!shown.has(r)||!(r.kind==='class'||(r.kind==='lunch'&&S.showLunch)))return;
     const li=document.createElement('li');
-    li.className='row'+(r.kind==='class'?'':' rest')+(r.kind==='lunch'?' lunch':'');
+    li.className='row'+(r.kind==='lunch'?' lunch-row':'');
     li.dataset.i=i;
     const label=r.kind==='class'
       ?`<input class="subj" id="subj-${r.id}" value="${esc(sub[r.id]||'')}" placeholder="과목 쓰기" aria-label="${r.name} 과목">`
-      :`<span class="subj">${r.kind==='lunch'?'맛있게 먹어요':'화장실 다녀오기, 물 마시기'}</span>`;
-    li.innerHTML=`<span class="no">${r.name}</span>${label}
+      :`<span class="subj">점심 시간</span>`;
+    li.innerHTML=`<span class="no">${r.kind==='lunch'?'점심':r.name}</span>${label}
       <span class="times"><input class="tm" id="s-${r.id}" value="${r.s}" aria-label="${r.name} 시작 시각" inputmode="numeric">~<input class="tm" id="e-${r.id}" value="${r.e}" aria-label="${r.name} 끝 시각" inputmode="numeric"></span>`;
     const si=li.querySelector('.subj');
     if(si.tagName==='INPUT')si.addEventListener('input',e=>{sub[r.id]=e.target.value;save()});
@@ -1007,6 +1012,27 @@ function highlight(){
     if(S.rows[i-1]&&S.rows[i-1].kind!=='class'&&S.rows[i-1].kind!=='lunch')S.rows.splice(i-1,1);
     save();renderPlan();
   });
+})();
+
+/* ----- 점심시간 넣기·빼기 ----- */
+(function(){
+  const b=$('per-lunch');
+  const pad=n=>String(n).padStart(2,'0'),addMin=(hm,m)=>{const [h,mi]=hm.split(':').map(Number),t=h*60+mi+m;return pad(Math.floor(t/60))+':'+pad(t%60)};
+  const paint=()=>{b.textContent=S.showLunch?'− 점심시간':'+ 점심시간'};
+  b.addEventListener('click',()=>{
+    if(S.showLunch){S.showLunch=false}
+    else{
+      S.showLunch=true;
+      if(!S.rows.some(r=>r.kind==='lunch')){
+        /* 점심시간이 없으면 4교시(없으면 마지막 교시) 뒤에 50분으로 넣어요 */
+        const cls=S.rows.filter(r=>r.kind==='class'),after=cls[Math.min(3,cls.length-1)],i=S.rows.indexOf(after),nx=S.rows[i+1];
+        if(nx&&nx.kind==='break'){nx.kind='lunch';nx.name='점심 시간'}
+        else S.rows.splice(i+1,0,{id:'l'+Date.now().toString(36),kind:'lunch',name:'점심 시간',s:after.e,e:addMin(after.e,50)});
+      }
+    }
+    save();paint();renderPlan();lastMin=-1;
+  });
+  paint();
 })();
 
 /* ----- 요일별 교시 설정 ----- */
