@@ -453,6 +453,44 @@ body.bg-dark .title,body.bg-dark .title input{color:#fff}
 #at-pop .qp-head{background:#dff5f2;gap:14px}
 #at-pop .qp-head b{color:#1a7f73}
 #at-pop .qp-body{flex:1;min-height:0}
+/* ----- 선생님의 인내심 ----- */
+.pt-btn{background:#e2f1fc}
+#pt-pop{width:min(620px,calc(100vw - 32px));height:min(calc(100vh - 100px),860px);left:max(16px,calc(50vw - 310px))}
+#pt-pop .qp-head{background:#e2f1fc}
+#pt-pop .qp-head b{color:#2c6fa3}
+#pt-pop .qp-body{flex:1;min-height:0;align-items:center;gap:1.2vh;padding:14px 20px 20px;overflow:hidden;container-type:size}
+.pt-alert{height:clamp(44px,12cqh,110px);flex:none;display:flex;align-items:center;justify-content:center;gap:.4em;font-family:var(--f-display);font-size:clamp(26px,9cqh,86px);line-height:1}
+.pt-alert>*{display:none}
+.pt-alert svg{height:1.05em;width:auto}
+#pt-pop.warn .pt-warn{display:flex;align-items:center;gap:.25em;color:#c98a00;animation:ptblink .6s steps(2,jump-none) infinite alternate}
+#pt-pop.emerg .pt-emerg{display:flex;align-items:center;gap:.25em;color:#e8203d}
+.pt-emerg .sir{display:inline-block;animation:ptsiren .35s ease-in-out infinite alternate}
+.pt-emerg b{font-weight:400;animation:ptblink .35s ease-in-out infinite alternate}
+@keyframes ptblink{from{opacity:1}to{opacity:.15}}
+@keyframes ptsiren{from{opacity:1;transform:scale(1.15) rotate(-8deg)}to{opacity:.2;transform:scale(.9) rotate(8deg)}}
+.pt-cup{flex:1;min-height:0;width:100%;cursor:ns-resize;touch-action:none;user-select:none;outline:none}
+.pt-cup:focus-visible{outline:3px solid var(--sky);outline-offset:4px;border-radius:16px}
+.pt-water{transition:transform .35s ease}
+.pt-cup.drag .pt-water{transition:none}
+.pt-wave{animation:ptwave 2.4s linear infinite}
+@keyframes ptwave{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+.pt-bub{animation:ptbub 3s ease-in infinite;opacity:0}
+@keyframes ptbub{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-150px);opacity:0}}
+.pt-row{flex:none;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.pt-num{font-family:var(--f-display);font-size:clamp(28px,8cqh,64px);line-height:1;min-width:2.6em;text-align:center;color:#2c6fa3}
+#pt-pop.warn .pt-num{color:#d98500}#pt-pop.emerg .pt-num{color:#e8203d}
+.pt-row button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:6px 14px;cursor:pointer;font-family:var(--f-display);font-size:clamp(14px,3cqh,20px);color:var(--ink)}
+.pt-row button:hover{border-color:#5aa9e6}
+.pt-row .pt-full{background:#5ab4ec;border-color:#5ab4ec;color:#fff}
+.pt-tip{flex:none;font-size:clamp(12px,2.2cqh,15px);color:var(--soft)}
+#pt-pop.docked .pt-tip{display:none}
+#pt-pop.docked .qp-body{padding:8px 10px 10px;gap:4px}
+#pt-pop.docked .pt-cup{min-height:50%}
+#pt-pop.docked .pt-row{gap:6px;flex-wrap:nowrap}
+#pt-pop.docked .pt-row button{padding:3px 8px;font-size:clamp(12px,5cqh,18px);white-space:nowrap}
+#pt-pop.docked .pt-num{font-size:clamp(20px,11cqh,56px);min-width:2em}
+#pt-pop.docked .pt-alert{height:clamp(30px,13cqh,90px);font-size:clamp(22px,11cqh,76px)}
+@media (prefers-reduced-motion:reduce){.pt-wave,.pt-bub,.pt-emerg .sir,.pt-emerg b,#pt-pop.warn .pt-warn{animation:none}}
 .at-date{display:flex;align-items:center;gap:8px;margin-left:auto;font-family:var(--f-display);font-size:22px}
 .at-date button{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:2px 12px;cursor:pointer;font-family:var(--f-display);font-size:16px}
 .at-date #at-today{background:var(--lemon)}
@@ -653,6 +691,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
         <button class="btn st-btn" id="st-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="3" rx="1" fill="#c99a6b" stroke="#3b3550" stroke-width="1.3"/><rect x="3" y="9" width="7" height="5" rx="1.2" fill="#8fd3ff" stroke="#3b3550" stroke-width="1.3"/><rect x="14" y="9" width="7" height="5" rx="1.2" fill="#ffa8c5" stroke="#3b3550" stroke-width="1.3"/><rect x="3" y="16.5" width="7" height="5" rx="1.2" fill="#ffa8c5" stroke="#3b3550" stroke-width="1.3"/><rect x="14" y="16.5" width="7" height="5" rx="1.2" fill="#8fd3ff" stroke="#3b3550" stroke-width="1.3"/></svg>자리 배치</button>
         <button class="btn sv-btn" id="sv-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2" fill="#fff7cf" stroke="#3b3550" stroke-width="1.5"/><path d="M12 17v3M8 21h8" stroke="#3b3550" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 9.5l2 2 4-4" fill="none" stroke="#e8203d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="13" r="1.2" fill="#ffb361"/><circle cx="6.5" cy="13.5" r="1" fill="#5aa9e6"/></svg>자리 뽑기</button>
         <button class="btn at-btn" id="at-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="17" rx="2.5" fill="#dff5f2" stroke="#3b3550" stroke-width="1.5"/><rect x="8.5" y="2.5" width="7" height="3.5" rx="1.2" fill="#fff" stroke="#3b3550" stroke-width="1.3"/><path d="M8 12.5l2.5 2.5 5-5" fill="none" stroke="#1f9e8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>출결 체크</button>
+        <button class="btn pt-btn" id="pt-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12M7.5 3v15a3 3 0 003 3h3a3 3 0 003-3V3" fill="none" stroke="#3b3550" stroke-width="1.6" stroke-linecap="round"/><path d="M8.3 11h7.4v7a2.2 2.2 0 01-2.2 2.2h-3a2.2 2.2 0 01-2.2-2.2z" fill="#5ab4ec"/><path d="M10 7h2M10 9.5h1.5" stroke="#3b3550" stroke-width="1.2" stroke-linecap="round"/></svg>인내심</button>
       </div>
     </div>
     <div class="tb-live" id="tb-live"></div>
@@ -839,6 +878,33 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
       <button type="button" class="ed-chip" id="ed-dot" aria-pressed="true">점무늬</button></div>
   </div>
   <div class="ed-acts"><button type="button" id="ed-reset">처음 모양으로</button><button type="button" id="ed-cancel">취소</button><button type="button" class="ed-save" id="ed-save">이대로 저장</button></div>
+</div>
+
+<div class="qr-pop" id="pt-pop" role="dialog" aria-label="선생님의 인내심" hidden>
+  <div class="qp-head"><b><svg viewBox="0 0 24 24" aria-hidden="true" style="width:34px;height:34px"><path d="M6 3h12M7.5 3v15a3 3 0 003 3h3a3 3 0 003-3V3" fill="none" stroke="#3b3550" stroke-width="1.6" stroke-linecap="round"/><path d="M8.3 11h7.4v7a2.2 2.2 0 01-2.2 2.2h-3a2.2 2.2 0 01-2.2-2.2z" fill="#5ab4ec"/><path d="M10 7h2M10 9.5h1.5" stroke="#3b3550" stroke-width="1.2" stroke-linecap="round"/></svg>선생님의 인내심</b><button class="cp-x" id="pt-x" type="button" aria-label="인내심 창 닫기">✕</button></div>
+  <div class="qp-body">
+    <div class="pt-alert" aria-live="polite">
+      <span class="pt-warn"><svg viewBox="0 0 48 44" aria-hidden="true"><path d="M24 3L46 41H2z" fill="#ffd84d" stroke="#3b3550" stroke-width="3" stroke-linejoin="round"/><path d="M24 15v13" stroke="#3b3550" stroke-width="4.5" stroke-linecap="round"/><circle cx="24" cy="34.5" r="2.8" fill="#3b3550"/></svg>주의</span>
+      <span class="pt-emerg"><span class="sir" aria-hidden="true">🚨</span><b>비상!</b><span class="sir" aria-hidden="true">🚨</span></span>
+    </div>
+    <svg class="pt-cup" id="pt-cup" viewBox="0 0 200 262" role="slider" tabindex="0" aria-label="선생님의 인내심" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+      <defs><clipPath id="pt-clip"><path d="M38 30V228q0 16 16 16h92q16 0 16-16V30z"/></clipPath></defs>
+      <path d="M34 26V228q0 20 20 20h92q20 0 20-20V26" fill="#f2f9ff"/>
+      <g clip-path="url(#pt-clip)"><g class="pt-water" id="pt-water">
+        <g class="pt-wave"><path id="pt-wfill" d="M-40 40 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 q10 -5 20 0 t20 0 V262 H-40 Z" fill="#5ab4ec"/></g>
+        <circle class="pt-bub" cx="70" cy="236" r="3.5" fill="#fff"/><circle class="pt-bub" cx="120" cy="236" r="2.5" fill="#fff" style="animation-delay:1s"/><circle class="pt-bub" cx="95" cy="236" r="3" fill="#fff" style="animation-delay:2s"/>
+      </g></g>
+      <path d="M148 224h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 203h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 183h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 162h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 142h10" stroke="#3b3550" stroke-width="2" opacity=".55"/><path d="M148 122h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 101h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 81h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 60h10" stroke="#3b3550" stroke-width="1.4" opacity=".55"/><path d="M148 40h10" stroke="#3b3550" stroke-width="2" opacity=".55"/>
+      <path d="M34 26V228q0 20 20 20h92q20 0 20-20V26" fill="none" stroke="#3b3550" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M22 20q8 2 12 8M166 26h8" fill="none" stroke="#3b3550" stroke-width="5" stroke-linecap="round"/>
+      <path d="M46 60v120" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      <g transform="translate(100 140)"><rect x="-46" y="-30" width="92" height="60" rx="10" fill="#fffdf6" stroke="#3b3550" stroke-width="2.5"/>
+        <text y="-6" text-anchor="middle" font-size="17" fill="#3b3550" style="font-family:var(--f-display)">선생님의</text>
+        <text y="19" text-anchor="middle" font-size="22" fill="#2c6fa3" style="font-family:var(--f-display)">인내심</text></g>
+    </svg>
+    <div class="pt-row"><button type="button" id="pt-down">− 10</button><span class="pt-num" id="pt-num">100</span><button type="button" id="pt-up">+ 10</button><button type="button" class="pt-full" id="pt-full">다시 가득 💧</button></div>
+    <div class="pt-tip">컵을 위아래로 끌거나 눌러서 물 높이를 바꿔요</div>
+  </div>
 </div>
 
 <div class="qr-pop" id="at-pop" role="dialog" aria-label="출결 체크" hidden>
@@ -2034,11 +2100,42 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
   rosterHooks.push(()=>{if(!pop.hidden)render()});
 })();
 
+/* ----- 선생님의 인내심 ----- */
+(function(){
+  const pop=$('pt-pop'),cup=$('pt-cup'),water=$('pt-water'),wfill=$('pt-wfill'),num=$('pt-num');
+  /* 마지막 인내심은 기억하고, 날짜가 바뀌면(자정) 100으로 돌아가요 */
+  let v=100,drag=false;
+  const today=()=>dkey(new Date());
+  const stored=()=>{const o=S.patience;return o&&o.d===today()&&typeof o.v==='number'?o.v:100};
+  function set(n){
+    v=Math.max(0,Math.min(100,Math.round(n)));
+    const was=S.patience;S.patience={v,d:today()};if(!was||was.v!==v||was.d!==S.patience.d)save();
+    water.style.transform=`translateY(${(204*(100-v)/100).toFixed(1)}px)`;
+    num.textContent=v;cup.setAttribute('aria-valuenow',v);
+    wfill.setAttribute('fill',v<10?'#f0475e':v<20?'#ffb03a':'#5ab4ec');
+    pop.classList.toggle('warn',v<20&&v>=10);pop.classList.toggle('emerg',v<10);
+    try{hurry('pt',v<10&&!pop.hidden)}catch(e){}
+  }
+  const fromY=e=>{const pt=cup.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const y=pt.matrixTransform(cup.getScreenCTM().inverse()).y;return (244-y)/204*100};
+  cup.addEventListener('pointerdown',e=>{drag=true;cup.setPointerCapture(e.pointerId);set(fromY(e));e.preventDefault()});
+  cup.addEventListener('pointermove',e=>{if(!drag)return;cup.classList.add('drag');set(fromY(e))});
+  const end=()=>{drag=false;cup.classList.remove('drag')};
+  cup.addEventListener('pointerup',end);cup.addEventListener('pointercancel',end);
+  cup.addEventListener('keydown',e=>{const d={ArrowUp:5,ArrowRight:5,ArrowDown:-5,ArrowLeft:-5,PageUp:10,PageDown:-10}[e.key];
+    if(d){set(v+d);e.preventDefault()}else if(e.key==='Home'){set(100);e.preventDefault()}else if(e.key==='End'){set(0);e.preventDefault()}});
+  $('pt-down').addEventListener('click',()=>set(v-10));$('pt-up').addEventListener('click',()=>set(v+10));$('pt-full').addEventListener('click',()=>set(100));
+  $('pt-btn').addEventListener('click',()=>{pop.hidden=!pop.hidden;if(!pop.hidden){pop.style.zIndex=1500;set(stored())}else hurry('pt',false)});
+  $('pt-x').addEventListener('click',()=>{pop.hidden=true;hurry('pt',false)});
+  setTimeout(()=>set(stored()),0);
+  /* 게시판에 붙여 둔 채로 자정을 넘기면 가득 채워요 */
+  setInterval(()=>{if(S.patience&&S.patience.d!==today()&&!drag)set(100)},20000);
+})();
+
 /* ===== 게시판 설정: 요소 고르기 · 옮기기 · 크기 바꾸기 · 저장 ===== */
 (function(){
   const board=$('board'),bar=$('ed-bar');
   const TOOLS=[['clean','clean-btn','청소 시간','#dcf6ec'],['timer','timer-btn','타이머','#fff0de'],['notice','notice-btn','알림장','#e2f1fc'],['qr','qr-btn','QR코드','#efe8ff'],
-    ['km','km-btn','반성','#ffe3e3'],['pk','pk-btn','학생 뽑기','#e6fadc'],['st','st-btn','자리 배치','#e2f1fc'],['sv','sv-btn','자리 뽑기','#fff7cf'],['at','at-btn','출결 체크','#dff5f2']];
+    ['km','km-btn','반성','#ffe3e3'],['pk','pk-btn','학생 뽑기','#e6fadc'],['st','st-btn','자리 배치','#e2f1fc'],['sv','sv-btn','자리 뽑기','#fff7cf'],['at','at-btn','출결 체크','#dff5f2'],['pt','pt-btn','인내심','#e2f1fc']];
   const MAIN=[['clock','clock','시계'],['plan','w-plan','시간표'],['praise','w-praise','칭찬 게시판'],['notice','w-notice','안내사항(칠판)']];
   /* 기본 배치 = 지금까지의 모양 (보드 안에서 % 위치) */
   const DEFAULT=[{w:'clock',x:0,y:1.5,ww:60.6,hh:52},{w:'plan',x:0,y:57,ww:60.6,hh:43},{w:'praise',x:61.8,y:1.5,ww:38.2,hh:47},{w:'notice',x:61.8,y:52,ww:38.2,hh:48}];
@@ -2063,7 +2160,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
     sec.classList.add('has-dock');board.appendChild(sec);dock(k,sec);return sec;
   }
   /* 도구 창을 게시판 칸 안에 그대로 붙여요 (버튼을 한 번 더 누를 필요 없이 바로 사용) */
-  const POPS={clean:'clean-pop',timer:'timer-pop',notice:'notice-pop',qr:'qr-pop',km:'km-pop',pk:'pk-pop',st:'st-pop',sv:'sv',at:'at-pop'};
+  const POPS={clean:'clean-pop',timer:'timer-pop',notice:'notice-pop',qr:'qr-pop',km:'km-pop',pk:'pk-pop',st:'st-pop',sv:'sv',at:'at-pop',pt:'pt-pop'};
   const ZOOMED={clean:1,timer:1};
   const watch=new MutationObserver(ms=>ms.forEach(m=>{const el=m.target;if(el.classList.contains('docked')&&el.hidden)el.hidden=false}));
   const fits=new Map();
@@ -2212,7 +2309,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
 (function(){
   if(!S.popSize||typeof S.popSize!=='object')S.popSize={};
   /* 청소·타이머 창은 글씨까지 같이 커지고, 나머지 창은 창 크기만 바뀌어요 */
-  const LIST=[['clean-pop','zoom'],['timer-pop','zoom'],['qr-pop','box'],['km-pop','box'],['pk-pop','box'],['st-pop','box'],['at-pop','box']];
+  const LIST=[['clean-pop','zoom'],['timer-pop','zoom'],['qr-pop','box'],['km-pop','box'],['pk-pop','box'],['st-pop','box'],['at-pop','box'],['pt-pop','box']];
   LIST.forEach(([id,kind])=>{
     const pop=$(id);if(!pop)return;
     const g=document.createElement('div');g.className='pop-grip';g.title='끌어서 창 크기 바꾸기 (두 번 누르면 처음 크기)';g.setAttribute('aria-hidden','true');pop.appendChild(g);
