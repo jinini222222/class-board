@@ -2112,9 +2112,9 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
     const was=S.patience;S.patience={v,d:today()};if(!was||was.v!==v||was.d!==S.patience.d)save();
     water.style.transform=`translateY(${(204*(100-v)/100).toFixed(1)}px)`;
     num.textContent=v;cup.setAttribute('aria-valuenow',v);
-    wfill.setAttribute('fill',v<10?'#f0475e':v<20?'#ffb03a':'#5ab4ec');
-    pop.classList.toggle('warn',v<20&&v>=10);pop.classList.toggle('emerg',v<10);
-    try{hurry('pt',v<10&&!pop.hidden)}catch(e){}
+    wfill.setAttribute('fill',v<20?'#f0475e':v<45?'#ffb03a':'#5ab4ec');
+    pop.classList.toggle('warn',v<45&&v>=20);pop.classList.toggle('emerg',v<20);
+    try{hurry('pt',v<20&&!pop.hidden)}catch(e){}
   }
   const fromY=e=>{const pt=cup.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const y=pt.matrixTransform(cup.getScreenCTM().inverse()).y;return (244-y)/204*100};
   cup.addEventListener('pointerdown',e=>{drag=true;cup.setPointerCapture(e.pointerId);set(fromY(e));e.preventDefault()});
