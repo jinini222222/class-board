@@ -430,6 +430,50 @@ body.editing .board{background-image:linear-gradient(rgba(90,169,230,.12) 1px,tr
   background:linear-gradient(135deg,transparent 50%,rgba(90,169,230,.25) 50%);border-bottom-right-radius:20px}
 .pop-grip::after{content:"";position:absolute;right:8px;bottom:8px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 4px,var(--soft) 4px 6px);clip-path:polygon(100% 0,100% 100%,0 100%)}
 
+/* 출결 체크 */
+.at-btn{background:#dff5f2}
+#at-pop{width:min(1180px,calc(100vw - 32px));height:min(calc(100vh - 100px),860px);left:max(16px,calc(50vw - 590px))}
+#at-pop .qp-head{background:#dff5f2;gap:14px}
+#at-pop .qp-head b{color:#1a7f73}
+#at-pop .qp-body{flex:1;min-height:0}
+.at-date{display:flex;align-items:center;gap:8px;margin-left:auto;font-family:var(--f-display);font-size:22px}
+.at-date button{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:2px 12px;cursor:pointer;font-family:var(--f-display);font-size:16px}
+.at-date #at-today{background:var(--lemon)}
+.at-sum{margin-left:auto;font-family:var(--f-display);font-size:18px;color:var(--ink)}
+.at-sum b{font-weight:400;color:#c92a3e}
+.at-sec{font-family:var(--f-display);font-size:20px;color:var(--ink)}
+.at-sec small{font-family:var(--f-body);font-size:14px;color:var(--soft);margin-left:6px}
+.at-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.at-stu{border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:8px 6px;cursor:pointer;font-family:var(--f-display);font-size:20px;display:flex;align-items:baseline;justify-content:center;gap:6px;color:var(--ink)}
+.at-stu small{font-family:var(--f-body);font-size:13px;color:var(--soft)}
+.at-stu.M{border-color:#cfe3f3}.at-stu.F{border-color:#f7d3de}
+.at-stu:hover{border-color:#1f9e8f;background:#f1fbf9}
+.at-stu.sel{border-color:#1f9e8f;background:#dff5f2}
+.at-stu:focus-visible,.at-types button:focus-visible,.at-pick-acts button:focus-visible,.at-list button:focus-visible,.at-dl:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.at-empty{color:var(--soft);font-size:16px;padding:6px 0}
+.at-pick{border:3px solid #1f9e8f;border-radius:18px;background:#f1fbf9;padding:12px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.at-pick b{font-family:var(--f-display);font-weight:400;font-size:22px}
+.at-types{display:flex;gap:6px;flex-wrap:wrap}
+.at-types button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:6px 14px;cursor:pointer;font-family:var(--f-display);font-size:18px;color:var(--ink)}
+.at-types button[aria-pressed="true"].t-ok{background:#2f9e6f;border-color:#2f9e6f;color:#fff}
+.at-types button[aria-pressed="true"].t-sick{background:#ef8a1d;border-color:#ef8a1d;color:#fff}
+.at-types button[aria-pressed="true"].t-no{background:#d6334a;border-color:#d6334a;color:#fff}
+#at-note{flex:1;min-width:220px;font-size:17px;border:2px solid var(--line);border-radius:12px;padding:7px 10px;background:var(--paper);color:var(--ink)}
+#at-note:focus{outline:none;border-color:#1f9e8f}
+.at-pick-acts{display:flex;gap:6px}
+.at-pick-acts button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:6px 16px;cursor:pointer;font-family:var(--f-display);font-size:17px;color:var(--ink)}
+.at-pick-acts .at-ok{background:#1f9e8f;border-color:#1f9e8f;color:#fff}
+.at-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.at-list li{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:14px;padding:6px 12px;font-size:18px}
+.at-badge{font-family:var(--f-display);font-size:16px;color:#fff;border-radius:999px;padding:2px 12px;white-space:nowrap}
+.at-badge.t-ok{background:#2f9e6f}.at-badge.t-sick{background:#ef8a1d}.at-badge.t-no{background:#d6334a}
+.at-list .nm{font-family:var(--f-display);font-size:20px;white-space:nowrap}
+.at-list .nt{flex:1;min-width:0;color:var(--soft);overflow-wrap:anywhere}
+.at-list button{border:2px solid var(--line);background:var(--paper);border-radius:10px;padding:3px 10px;cursor:pointer;font-size:14px;color:var(--soft);white-space:nowrap}
+.at-export{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:2px dashed var(--line);padding-top:12px;margin-top:auto;font-family:var(--f-display);font-size:17px}
+.at-export select{font-size:16px;border:2px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--paper);color:var(--ink)}
+.at-dl{border:none;background:#1f9e8f;color:#fff;border-radius:12px;padding:7px 16px;cursor:pointer;font-family:var(--f-display);font-size:17px;box-shadow:0 3px 0 #157468}
+
 /* 10초 전 빨간 번쩍임 */
 .hurry-fx{position:fixed;inset:0;pointer-events:none;z-index:4000;opacity:0;
   background:rgba(255,40,60,.22);box-shadow:inset 0 0 0 16px #ff2d48,inset 0 0 160px 60px rgba(255,0,30,.45)}
@@ -586,6 +630,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
         <button class="btn pk-btn" id="pk-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#a6f08b" stroke="#3b3550" stroke-width="1.6"/><path d="M12 6v3M12 15v3M6 12h3M15 12h3" stroke="#3b3550" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="#3b3550"/></svg>학생 뽑기</button>
         <button class="btn st-btn" id="st-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="3" rx="1" fill="#c99a6b" stroke="#3b3550" stroke-width="1.3"/><rect x="3" y="9" width="7" height="5" rx="1.2" fill="#8fd3ff" stroke="#3b3550" stroke-width="1.3"/><rect x="14" y="9" width="7" height="5" rx="1.2" fill="#ffa8c5" stroke="#3b3550" stroke-width="1.3"/><rect x="3" y="16.5" width="7" height="5" rx="1.2" fill="#ffa8c5" stroke="#3b3550" stroke-width="1.3"/><rect x="14" y="16.5" width="7" height="5" rx="1.2" fill="#8fd3ff" stroke="#3b3550" stroke-width="1.3"/></svg>자리 배치</button>
         <button class="btn sv-btn" id="sv-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2" fill="#fff7cf" stroke="#3b3550" stroke-width="1.5"/><path d="M12 17v3M8 21h8" stroke="#3b3550" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 9.5l2 2 4-4" fill="none" stroke="#e8203d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="13" r="1.2" fill="#ffb361"/><circle cx="6.5" cy="13.5" r="1" fill="#5aa9e6"/></svg>자리 뽑기</button>
+        <button class="btn at-btn" id="at-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="17" rx="2.5" fill="#dff5f2" stroke="#3b3550" stroke-width="1.5"/><rect x="8.5" y="2.5" width="7" height="3.5" rx="1.2" fill="#fff" stroke="#3b3550" stroke-width="1.3"/><path d="M8 12.5l2.5 2.5 5-5" fill="none" stroke="#1f9e8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>출결 체크</button>
       </div>
     </div>
     <div class="tb-live" id="tb-live"></div>
@@ -769,6 +814,33 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
     <div class="ed-group"><span class="ed-lab">도구</span><div class="ed-chips" id="ed-tools"></div></div>
   </div>
   <div class="ed-acts"><button type="button" id="ed-reset">처음 모양으로</button><button type="button" id="ed-cancel">취소</button><button type="button" class="ed-save" id="ed-save">이대로 저장</button></div>
+</div>
+
+<div class="qr-pop" id="at-pop" role="dialog" aria-label="출결 체크" hidden>
+  <div class="qp-head"><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="17" rx="2.5" fill="#dff5f2" stroke="#3b3550" stroke-width="1.5"/><rect x="8.5" y="2.5" width="7" height="3.5" rx="1.2" fill="#fff" stroke="#3b3550" stroke-width="1.3"/><path d="M8 12.5l2.5 2.5 5-5" fill="none" stroke="#1f9e8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>출결 체크</b>
+    <div class="at-date"><button type="button" id="at-prev">◀</button><span id="at-day"></span><button type="button" id="at-next">▶</button><button type="button" id="at-today" hidden>오늘로</button></div>
+    <button class="cp-x" id="at-x" type="button" aria-label="출결 체크 닫기">✕</button></div>
+  <div class="qp-body">
+    <div class="rs-bar"><span id="at-roster"></span><button type="button" class="rs-load">명단 엑셀 넣기</button><span class="rs-msg"></span><span class="at-sum" id="at-sum"></span></div>
+    <div class="at-sec">출석 <small>결석한 학생 이름을 눌러 주세요</small></div>
+    <div class="at-grid" id="at-grid"></div>
+    <div class="at-pick" id="at-pick" hidden>
+      <b id="at-who"></b>
+      <div class="at-types" id="at-types" role="group" aria-label="결석 종류">
+        <button type="button" data-t="인정" class="t-ok">출석인정결석</button><button type="button" data-t="병" class="t-sick">병결석</button><button type="button" data-t="미인정" class="t-no">미인정결석</button>
+      </div>
+      <input id="at-note" maxlength="60" placeholder="세부사항 (적지 않아도 돼요) 예: 체험학습, 감기" aria-label="세부사항">
+      <div class="at-pick-acts"><button type="button" id="at-cancel">취소</button><button type="button" class="at-ok" id="at-ok">저장</button></div>
+    </div>
+    <div class="at-sec">결석 <small id="at-abs-n"></small></div>
+    <ul class="at-list" id="at-list"></ul>
+    <div class="at-export">
+      <span>출결 기록 내려받기</span>
+      <select id="at-range" aria-label="내려받을 기간"></select>
+      <button type="button" class="at-dl" id="at-dl">엑셀로 내려받기</button>
+      <span class="rs-msg" id="at-dl-msg"></span>
+    </div>
+  </div>
 </div>
 
 <div class="hurry-fx" aria-hidden="true"></div>
@@ -1504,6 +1576,12 @@ let xlp=null;
 const xlsxLib=()=>window.XLSX?Promise.resolve(window.XLSX):(xlp||(xlp=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src=XLSX_URL;
   sc.onload=()=>res(window.XLSX);sc.onerror=()=>{xlp=null;rej(new Error('lib'))};document.head.appendChild(sc)})));
 if(!Array.isArray(S.roster))S.roster=[];
+/* 엑셀 파일을 이름 그대로 내려받아요 */
+function saveXlsx(X,wb,name){
+  const data=X.write(wb,{bookType:'xlsx',type:'array'}),url=URL.createObjectURL(new Blob([data],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();
+  setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},1500);
+}
 const rosterHooks=[];
 const normG=v=>{v=String(v||'').trim().toLowerCase();if(/^(남|m|male|boy|1)/.test(v))return'M';if(/^(여|f|female|girl|2)/.test(v))return'F';return null};
 function rosterSummary(){const r=S.roster,m=r.filter(x=>x.g==='M').length,f=r.filter(x=>x.g==='F').length;
@@ -1523,7 +1601,7 @@ async function readRoster(file){
   return out;
 }
 function rosterTemplate(){xlsxLib().then(X=>{const ws=X.utils.aoa_to_sheet([['번호','이름','성별'],[1,'김하늘','여'],[2,'이준서','남'],[3,'박서연','여']]);
-  const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,'명단');X.writeFile(wb,'학생명단_양식.xlsx')}).catch(()=>{})}
+  const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,'명단');saveXlsx(X,wb,'학생명단_양식.xlsx')}).catch(()=>{})}
 (function(){
   const fileIn=$('rs-file');let owner=null;
   const paint=()=>document.querySelectorAll('#pk-roster,#st-roster').forEach(el=>el.innerHTML=rosterSummary());
@@ -1815,11 +1893,89 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
   document.addEventListener('fullscreenchange',()=>{if(fs&&!document.fullscreenElement&&!sv.hidden){fs=false;close()}});
 })();
 
+/* ----- 출결 체크: 결석 학생만 골라 적고, 날짜별로 모아 엑셀로 내려받아요 ----- */
+(function(){
+  const pop=$('at-pop'),grid=$('at-grid'),pick=$('at-pick'),list=$('at-list');
+  const TYPES={'인정':['출석인정결석','t-ok'],'병':['병결석','t-sick'],'미인정':['미인정결석','t-no']};
+  if(!S.att||typeof S.att!=='object')S.att={};
+  let d=today0(),cur=null,type=null;
+  const k=()=>dkey(d);
+  const rec=()=>S.att[k()]||{};
+  const lab=dt=>`${dt.getMonth()+1}월 ${dt.getDate()}일 (${DAYS[dt.getDay()]})`;
+  function render(){
+    const isT=k()===dkey(today0());
+    $('at-day').textContent=lab(d)+(isT?' 오늘':'');$('at-today').hidden=isT;
+    $('at-roster').innerHTML=rosterSummary();
+    const r=rec(),ro=S.roster;
+    const absent=ro.filter(st=>r[st.id]);
+    $('at-sum').innerHTML=ro.length?`재적 ${ro.length}명 · 출석 ${ro.length-absent.length}명 · <b>결석 ${absent.length}명</b>`:'';
+    grid.innerHTML=ro.length?ro.filter(st=>!r[st.id]).map(st=>`<button type="button" class="at-stu ${st.g||''}${cur===st.id?' sel':''}" data-id="${st.id}"><small>${st.no}</small>${esc(st.name)}</button>`).join('')||'<div class="at-empty">모든 학생에게 출결 사항이 있어요.</div>'
+      :'<div class="at-empty">먼저 [명단 엑셀 넣기]로 학생 명단을 넣어 주세요.</div>';
+    $('at-abs-n').textContent=absent.length?`${absent.length}명`:'없어요';
+    list.innerHTML=absent.map(st=>{const v=r[st.id],t=TYPES[v.type]||['결석','t-no'];
+      return `<li><span class="at-badge ${t[1]}">${t[0]}</span><span class="nm">${st.no}번 ${esc(st.name)}</span><span class="nt">${esc(v.note||'')}</span><button type="button" data-edit="${st.id}">고치기</button><button type="button" data-undo="${st.id}">출석으로 되돌리기</button></li>`}).join('');
+    /* 기록이 있는 날짜에 맞춰 내려받을 기간 고르기 */
+    const months=[...new Set(Object.keys(S.att).filter(x=>Object.keys(S.att[x]).length).map(x=>x.slice(0,7)))].sort().reverse();
+    const sel=$('at-range'),keep=sel.value;
+    sel.innerHTML='<option value="all">모든 기록</option>'+months.map(m=>{const [y,mm]=m.split('-');return `<option value="${m}">${y}년 ${+mm}월</option>`}).join('');
+    if([...sel.options].some(o=>o.value===keep))sel.value=keep;
+  }
+  function open(id,existing){
+    cur=id;const st=S.roster.find(x=>x.id===id);if(!st)return;
+    $('at-who').textContent=`${st.no}번 ${st.name}`;
+    type=existing?existing.type:null;$('at-note').value=existing?existing.note||'':'';
+    document.querySelectorAll('#at-types button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===type));
+    pick.hidden=false;render();
+  }
+  function close(){cur=null;type=null;pick.hidden=true;render()}
+  grid.addEventListener('click',e=>{const b=e.target.closest('.at-stu');if(b)open(b.dataset.id,null)});
+  $('at-types').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;type=b.dataset.t;
+    document.querySelectorAll('#at-types button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('at-note').focus()});
+  $('at-note').addEventListener('keydown',e=>{if(e.key==='Enter')$('at-ok').click()});
+  $('at-ok').addEventListener('click',()=>{
+    if(!type){$('at-types').animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:250});return}
+    const st=S.roster.find(x=>x.id===cur);if(!st)return;
+    (S.att[k()]=S.att[k()]||{})[cur]={type,note:$('at-note').value.trim(),no:st.no,name:st.name,g:st.g||''};
+    save();close();
+  });
+  $('at-cancel').addEventListener('click',close);
+  list.addEventListener('click',e=>{
+    const ed=e.target.closest('[data-edit]');if(ed){open(ed.dataset.edit,rec()[ed.dataset.edit]);return}
+    const un=e.target.closest('[data-undo]');if(un){delete (S.att[k()]||{})[un.dataset.undo];save();render()}
+  });
+  const move=st=>{const n=new Date(d);do{n.setDate(n.getDate()+st)}while(n.getDay()===0||n.getDay()===6);d=n;cur=null;pick.hidden=true;render()};
+  $('at-prev').addEventListener('click',()=>move(-1));$('at-next').addEventListener('click',()=>move(1));
+  $('at-today').addEventListener('click',()=>{d=today0();cur=null;pick.hidden=true;render()});
+  /* 엑셀 내려받기: [날짜별 기록] + [학생별 합계] 두 장 */
+  $('at-dl').addEventListener('click',async()=>{
+    const msg=$('at-dl-msg');
+    if(IN_FRAME){msg.textContent='내려받기는 바탕화면 게시판 파일이나 공유 사이트에서 돼요.';return}
+    const range=$('at-range').value,keys=Object.keys(S.att).filter(x=>range==='all'||x.startsWith(range)).sort();
+    const rows=[['날짜','요일','번호','이름','결석 종류','세부사항']],tot={};
+    keys.forEach(dk=>{const [y,m,dd]=dk.split('-').map(Number),wd=DAYS[new Date(y,m-1,dd).getDay()];
+      Object.entries(S.att[dk]).sort((a,b)=>a[1].no-b[1].no).forEach(([id,v])=>{
+        rows.push([dk,wd,v.no,v.name,(TYPES[v.type]||['결석'])[0],v.note||'']);
+        const t=tot[v.no+'|'+v.name]=tot[v.no+'|'+v.name]||{no:v.no,name:v.name,'인정':0,'병':0,'미인정':0};t[v.type]=(t[v.type]||0)+1})});
+    if(rows.length===1){msg.textContent='이 기간에는 출결 기록이 없어요.';return}
+    S.roster.forEach(st=>{const key=st.no+'|'+st.name;if(!tot[key])tot[key]={no:st.no,name:st.name,'인정':0,'병':0,'미인정':0}});
+    const sum=[['번호','이름','출석인정결석','병결석','미인정결석','합계']].concat(Object.values(tot).sort((a,b)=>a.no-b.no).map(t=>[t.no,t.name,t['인정'],t['병'],t['미인정'],t['인정']+t['병']+t['미인정']]));
+    msg.textContent='파일을 만들고 있어요…';
+    try{const X=await xlsxLib(),wb=X.utils.book_new();
+      const w1=X.utils.aoa_to_sheet(rows);w1['!cols']=[{wch:12},{wch:5},{wch:6},{wch:10},{wch:14},{wch:30}];X.utils.book_append_sheet(wb,w1,'날짜별 기록');
+      const w2=X.utils.aoa_to_sheet(sum);w2['!cols']=[{wch:6},{wch:10},{wch:14},{wch:10},{wch:12},{wch:8}];X.utils.book_append_sheet(wb,w2,'학생별 합계');
+      const nm=range==='all'?'전체':range.replace('-','년 ')+'월';saveXlsx(X,wb,`출결기록_${nm}.xlsx`);msg.textContent='내려받았어요 ✓'}
+    catch(e){msg.textContent='엑셀 파일을 만들지 못했어요. 인터넷 연결을 확인해 주세요.'}
+  });
+  $('at-btn').addEventListener('click',()=>{pop.hidden=!pop.hidden;if(!pop.hidden){pop.style.zIndex=1500;d=today0();cur=null;pick.hidden=true;render()}});
+  $('at-x').addEventListener('click',()=>{pop.hidden=true});
+  rosterHooks.push(()=>{if(!pop.hidden)render()});
+})();
+
 /* ===== 게시판 설정: 요소 고르기 · 옮기기 · 크기 바꾸기 · 저장 ===== */
 (function(){
   const board=$('board'),bar=$('ed-bar');
   const TOOLS=[['clean','clean-btn','청소 시간','#dcf6ec'],['timer','timer-btn','타이머','#fff0de'],['notice','notice-btn','알림장','#e2f1fc'],['qr','qr-btn','QR코드','#efe8ff'],
-    ['km','km-btn','반성','#ffe3e3'],['pk','pk-btn','학생 뽑기','#e6fadc'],['st','st-btn','자리 배치','#e2f1fc'],['sv','sv-btn','자리 뽑기','#fff7cf']];
+    ['km','km-btn','반성','#ffe3e3'],['pk','pk-btn','학생 뽑기','#e6fadc'],['st','st-btn','자리 배치','#e2f1fc'],['sv','sv-btn','자리 뽑기','#fff7cf'],['at','at-btn','출결 체크','#dff5f2']];
   const MAIN=[['clock','clock','시계'],['plan','w-plan','시간표'],['praise','w-praise','칭찬 게시판'],['notice','w-notice','안내사항(칠판)']];
   /* 기본 배치 = 지금까지의 모양 (보드 안에서 % 위치) */
   const DEFAULT=[{w:'clock',x:0,y:1.5,ww:60.6,hh:52},{w:'plan',x:0,y:57,ww:60.6,hh:43},{w:'praise',x:61.8,y:1.5,ww:38.2,hh:47},{w:'notice',x:61.8,y:52,ww:38.2,hh:48}];
@@ -1936,7 +2092,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
 (function(){
   if(!S.popSize||typeof S.popSize!=='object')S.popSize={};
   /* 청소·타이머 창은 글씨까지 같이 커지고, 나머지 창은 창 크기만 바뀌어요 */
-  const LIST=[['clean-pop','zoom'],['timer-pop','zoom'],['qr-pop','box'],['km-pop','box'],['pk-pop','box'],['st-pop','box']];
+  const LIST=[['clean-pop','zoom'],['timer-pop','zoom'],['qr-pop','box'],['km-pop','box'],['pk-pop','box'],['st-pop','box'],['at-pop','box']];
   LIST.forEach(([id,kind])=>{
     const pop=$(id);if(!pop)return;
     const g=document.createElement('div');g.className='pop-grip';g.title='끌어서 창 크기 바꾸기 (두 번 누르면 처음 크기)';g.setAttribute('aria-hidden','true');pop.appendChild(g);
