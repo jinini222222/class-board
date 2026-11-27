@@ -1015,6 +1015,18 @@ $('title-in').addEventListener('input',e=>{S.title=e.target.value;save()});
 /* ----- 시간표 (항상 바로 수정 가능) ----- */
 /* 요일별 교시: S.dayPeriods[요일] = 그날 마지막 교시 (없으면 시간표 전체) */
 if(!S.dayPeriods||typeof S.dayPeriods!=='object')S.dayPeriods={};
+/* 시간표 줄을 시작 시각 순서로 정리해요. 점심시간 시각을 바꾸면 알맞은 자리로 옮겨 가요.
+   점심시간과 겹치는 쉬는 시간 줄은 없애요. (바뀐 게 있으면 true) */
+function sortRows(){
+  const mm=hm=>{const [h,m]=hm.split(':').map(Number);return h*60+m};
+  const before=S.rows.map(r=>r.id).join();
+  const lunches=S.rows.filter(r=>r.kind==='lunch');
+  S.rows=S.rows.filter(r=>!(r.kind==='break'&&lunches.some(l=>mm(r.s)<mm(l.e)&&mm(r.e)>mm(l.s))));
+  const rank={class:0,break:1,lunch:2};
+  S.rows=S.rows.map((r,i)=>[r,i]).sort((a,b)=>mm(a[0].s)-mm(b[0].s)||rank[a[0].kind]-rank[b[0].kind]||a[1]-b[1]).map(x=>x[0]);
+  return S.rows.map(r=>r.id).join()!==before;
+}
+try{if(sortRows())save()}catch(e){}
 function dayRows(wd){
   const cls=S.rows.filter(r=>r.kind==='class'),n=Math.min(cls.length,S.dayPeriods[wd]||cls.length),last=cls[n-1];
   return last?S.rows.slice(0,S.rows.indexOf(last)+1):[];
@@ -1052,8 +1064,8 @@ function renderPlan(){
         r[k]=v;inp.value=v;
         /* 사이의 쉬는 시간·점심 시간도 함께 맞춰요 */
         const nb=S.rows[i+(k==='e'?1:-1)];
-        if(nb&&nb.kind!=='class'){if(k==='e')nb.s=v;else nb.e=v}
-        save();highlight();
+        if(nb&&nb.kind!=='class'&&r.kind==='class'){if(k==='e')nb.s=v;else nb.e=v}
+        const moved=sortRows();save();if(moved)renderPlan();else highlight();lastMin=-1;
       });
       inp.addEventListener('keydown',e=>{if(e.key==='Enter')inp.blur()});
     });
@@ -1106,12 +1118,14 @@ function highlight(){
       S.showLunch=true;
       if(!S.rows.some(r=>r.kind==='lunch')){
         /* 점심시간이 없으면 4교시(없으면 마지막 교시) 뒤에 50분으로 넣어요 */
-        const cls=S.rows.filter(r=>r.kind==='class'),after=cls[Math.min(3,cls.length-1)],i=S.rows.indexOf(after),nx=S.rows[i+1];
-        if(nx&&nx.kind==='break'){nx.kind='lunch';nx.name='점심 시간'}
-        else S.rows.splice(i+1,0,{id:'l'+Date.now().toString(36),kind:'lunch',name:'점심 시간',s:after.e,e:addMin(after.e,50)});
+        /* 입력된 시간을 보고 12시에 가장 가깝게 끝나는 교시 뒤에 넣어요 */
+        const mm=hm=>{const [h,m]=hm.split(':').map(Number);return h*60+m};
+        const cls=S.rows.filter(r=>r.kind==='class'),after=cls.reduce((a,c)=>Math.abs(mm(c.e)-720)<Math.abs(mm(a.e)-720)?c:a,cls[0]),i=S.rows.indexOf(after),nx=S.rows[i+1];
+        /* 50분짜리로 넣고, 겹치는 쉬는 시간은 정리돼요. 시각은 눌러서 우리 학교에 맞게 고치면 돼요 */
+        S.rows.splice(i+1,0,{id:'l'+Date.now().toString(36),kind:'lunch',name:'점심 시간',s:after.e,e:addMin(after.e,50)});
       }
     }
-    save();paint();renderPlan();lastMin=-1;
+    sortRows();save();paint();renderPlan();lastMin=-1;
   });
   paint();
 })();
@@ -2344,7 +2358,7 @@ function tick(){
   const classes=rows.filter(r=>r.kind==='class');
   if(wd===0||wd===6){state='오늘은 쉬는 날';sub='즐거운 주말 보내요!'}
   else{
-    const cur=rows.find(r=>t>=r.a&&t<r.b);
+    const cur=rows.find(r=>r.kind==='lunch'&&t>=r.a&&t<r.b)||rows.find(r=>t>=r.a&&t<r.b);
     const next=classes.find(r=>r.a>t);
     /* 1분 전 예비종: 모든 교시 앞에 울려요. 단, 앞 교시와 쉬는 시간 없이 바로 이어지면(블록수업) 울리지 않아요 */
     const ni=next?classes.indexOf(next):-1,prev=ni>0?classes[ni-1]:null;
