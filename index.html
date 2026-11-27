@@ -30,7 +30,7 @@ body{background:var(--board);background-image:radial-gradient(var(--dot) 1.4px,t
 *{box-sizing:border-box}
 button,input{font:inherit;color:inherit}
 .wrap{height:100%;display:grid;gap:clamp(14px,2.2vh,26px) clamp(14px,1.4vw,24px);
-  grid-template-columns:1.55fr 1fr;grid-template-rows:auto 1fr;grid-template-areas:"top top" "left right";
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"top" "board";
   padding-block:clamp(10px,1.8vh,22px);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .col{display:flex;flex-direction:column;gap:clamp(18px,2.8vh,30px);min-height:0;min-width:0}
@@ -369,6 +369,62 @@ body.peek .peek-tag{display:inline-block;position:absolute;top:-12px;right:14px;
 .snd-try:focus-visible,.snd-btn:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
 .snd-note{font-size:14px;color:#e8203d;min-height:1em}
 
+/* ===== 자유 배치 보드 ===== */
+.board{grid-area:board;position:relative;min-height:0;min-width:0}
+.board>.card{position:absolute;box-sizing:border-box;margin:0}
+.set-btn{display:inline-flex;align-items:center;gap:8px;background:#e2f1fc;font-size:clamp(15px,2vh,20px);padding:7px 16px}
+.set-btn svg{width:1.3em;height:1.3em}
+/* 자유게시판 */
+.c-free{container-type:size}
+.c-free .tape{background-color:#efe8ff;color:#6b4fc8}
+.fr-body{flex:1;min-height:0;overflow:auto;outline:none;font-family:var(--f-display);font-size:clamp(16px,min(9cqh,5cqw),56px);line-height:1.35;overflow-wrap:anywhere;padding:2px 4px;border-radius:8px}
+.fr-body:focus{box-shadow:inset 0 0 0 2px var(--line)}
+.fr-body:empty::before{content:attr(data-ph);color:#c9c4d8}
+/* 도구 바로가기 칸 */
+.c-tool{container-type:size;padding:10px!important;align-items:stretch;justify-content:stretch}
+.tl-go{flex:1;width:100%;border:none;border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2cqh;
+  font-family:var(--f-display);font-size:clamp(15px,min(16cqh,11cqw),60px);color:var(--ink);background:var(--tl-bg,#f3f0fa)}
+.tl-go svg{width:min(38cqh,30cqw);height:min(38cqh,30cqw)}
+.tl-go:hover{filter:brightness(.97)}
+.tl-go:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.tl-live{font-size:.75em;color:#fff;background:#ff9f43;border-radius:999px;padding:0 .5em;font-variant-numeric:tabular-nums}
+.tl-live:empty{display:none}
+/* 편집 모드 */
+body.editing .board{background-image:linear-gradient(rgba(90,169,230,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(90,169,230,.12) 1px,transparent 1px);background-size:5% 5%;outline:3px dashed #5aa9e6;outline-offset:6px;border-radius:12px}
+.ed-cover{position:absolute;inset:-4px;z-index:60;border:3px dashed #5aa9e6;border-radius:20px;background:rgba(226,241,252,.35);cursor:move;touch-action:none}
+.ed-cover .ed-name{position:absolute;left:10px;top:8px;background:#5aa9e6;color:#fff;font-family:var(--f-display);font-size:16px;padding:2px 10px;border-radius:999px;pointer-events:none}
+.ed-cover .ed-size{position:absolute;left:10px;bottom:8px;font-size:13px;color:#2c6fa3;background:rgba(255,255,255,.85);padding:1px 8px;border-radius:999px;pointer-events:none;font-variant-numeric:tabular-nums}
+.ed-cover .ed-x{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);background:var(--alert);color:#fff;cursor:pointer;font-size:14px}
+.ed-cover .ed-grip{position:absolute;right:-6px;bottom:-6px;width:34px;height:34px;border-radius:10px;background:#5aa9e6;border:3px solid #fff;cursor:nwse-resize;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.ed-cover .ed-grip::after{content:"";position:absolute;right:6px;bottom:6px;width:12px;height:12px;border-right:3px solid #fff;border-bottom:3px solid #fff}
+.ed-bar{position:fixed;z-index:4500;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);width:min(1180px,calc(100vw - 32px));box-sizing:border-box;
+  background:var(--paper);border:3px solid var(--ink);border-radius:22px;box-shadow:0 6px 0 var(--ink),0 18px 40px rgba(59,53,80,.3);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.ed-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ed-head b{font-family:var(--f-display);font-weight:400;font-size:22px}
+.ed-tip{font-size:14px;color:var(--soft)}
+.ed-min{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:2px 12px;cursor:pointer;font-size:14px;color:var(--soft)}
+.ed-bar.min .ed-groups,.ed-bar.min .ed-head .ed-tip{display:none}
+.ed-bar.min{width:auto;flex-direction:row;align-items:center;gap:14px}
+.ed-groups{display:flex;flex-direction:column;gap:6px}
+.ed-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ed-lab{font-family:var(--f-display);font-size:15px;color:var(--soft);width:5.5em;flex:none}
+.ed-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ed-chip{border:2px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 12px;cursor:pointer;font-family:var(--f-display);font-size:16px;color:var(--soft)}
+.ed-chip[aria-pressed="true"]{background:#5aa9e6;border-color:#5aa9e6;color:#fff}
+.ed-free{display:inline-flex;align-items:center;gap:4px;border:2px solid var(--line);border-radius:999px;padding:2px 4px 2px 6px}
+.ed-free input{width:8em;border:none;font-family:var(--f-display);font-size:15px;background:transparent;color:var(--ink);outline:none}
+.ed-free button{border:none;background:none;cursor:pointer;color:var(--soft);font-size:14px}
+.ed-free .ed-chip{padding:2px 8px;font-size:13px}
+.ed-add{border:2px dashed var(--line);background:none;border-radius:999px;padding:4px 12px;cursor:pointer;font-size:14px;color:var(--soft)}
+.ed-acts{display:flex;gap:8px;justify-content:flex-end}
+.ed-acts button{border:2px solid var(--line);background:var(--paper);border-radius:12px;padding:6px 16px;cursor:pointer;font-family:var(--f-display);font-size:17px;color:var(--ink)}
+.ed-acts .ed-save{background:#5cc96a;border-color:#3a9c47;color:#fff;box-shadow:0 3px 0 #3a9c47}
+.ed-chip:focus-visible,.ed-acts button:focus-visible,.ed-add:focus-visible,.ed-x:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+/* 도구 창 크기 조절 손잡이 */
+.pop-grip{position:absolute;right:0;bottom:0;width:36px;height:36px;cursor:nwse-resize;touch-action:none;z-index:5;
+  background:linear-gradient(135deg,transparent 50%,rgba(90,169,230,.25) 50%);border-bottom-right-radius:20px}
+.pop-grip::after{content:"";position:absolute;right:8px;bottom:8px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 4px,var(--soft) 4px 6px);clip-path:polygon(100% 0,100% 100%,0 100%)}
+
 /* 10초 전 빨간 번쩍임 */
 .hurry-fx{position:fixed;inset:0;pointer-events:none;z-index:4000;opacity:0;
   background:rgba(255,40,60,.22);box-shadow:inset 0 0 0 16px #ff2d48,inset 0 0 160px 60px rgba(255,0,30,.45)}
@@ -488,7 +544,9 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
 
 @media (max-width:760px){
   body{overflow:auto}
-  .wrap{height:auto;grid-template-columns:1fr;grid-template-areas:"top" "left" "right"}
+  .wrap{height:auto;grid-template-columns:1fr;grid-template-areas:"top" "board"}
+  .board{display:flex;flex-direction:column;gap:26px}
+  .board>.card{position:static!important;width:auto!important;height:auto!important;min-height:280px}
   .top{flex-wrap:wrap}
   .c-clock{flex-direction:column;align-items:stretch;container-type:normal}
   .date{font-size:22px}.time{font-size:80px}.state{font-size:24px}.sub{font-size:16px}.bell-ico{width:48px;height:48px}
@@ -511,6 +569,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
       <svg class="sun" viewBox="0 0 40 40" aria-hidden="true"><g stroke="#ffb361" stroke-width="3.5" stroke-linecap="round"><path d="M20 2v5M20 33v5M2 20h5M33 20h5M7 7l3.5 3.5M29.5 29.5 33 33M7 33l3.5-3.5M29.5 10.5 33 7"/></g><circle cx="20" cy="20" r="9.5" fill="#ffd84d"/><circle cx="16.5" cy="19" r="1.4" fill="#3b3550"/><circle cx="23.5" cy="19" r="1.4" fill="#3b3550"/><path d="M17 23q3 2.6 6 0" stroke="#3b3550" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
       <input id="title-in" aria-label="게시판 이름" value="우리 반 하루 게시판">
     </h1>
+    <button class="btn set-btn" id="set-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" fill="#8fd3ff" stroke="#3b3550" stroke-width="1.5"/><rect x="13" y="3" width="8" height="5" rx="2" fill="#ffd84d" stroke="#3b3550" stroke-width="1.5"/><rect x="13" y="10" width="8" height="11" rx="2" fill="#ffa8c5" stroke="#3b3550" stroke-width="1.5"/><rect x="3" y="13" width="8" height="8" rx="2" fill="#a6f08b" stroke="#3b3550" stroke-width="1.5"/></svg>게시판 설정</button>
     <div class="tb-wrap" id="tb-wrap">
       <button class="btn tb-btn" id="tb-btn" type="button" aria-expanded="false" aria-controls="tb-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2.5" fill="#ffd84d" stroke="#3b3550" stroke-width="1.6"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8" fill="none" stroke="#3b3550" stroke-width="1.6"/><path d="M3 13h18" stroke="#3b3550" stroke-width="1.6"/><rect x="10.5" y="11.5" width="3" height="3" rx=".8" fill="#fff" stroke="#3b3550" stroke-width="1.3"/></svg>도구함</button>
       <div class="tb-panel" id="tb-panel" role="menu" hidden>
@@ -546,7 +605,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
     </div>
   </header>
 
-  <div class="col col-l">
+  <div class="board" id="board">
     <section class="card c-clock" id="clock" aria-live="polite">
       <span class="tape">지금 몇 시?</span>
       <div class="clock-l">
@@ -562,21 +621,18 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
       </div>
     </section>
 
-    <section class="card c-plan">
+    <section class="card c-plan" id="w-plan">
       <span class="tape" id="plan-tape">오늘 시간표</span><span class="peek-tag">미리 입력 중</span>
       <ul class="plan" id="plan"></ul>
       <div class="plan-foot"><button type="button" id="per-add">+ 교시 추가</button><button type="button" id="per-del">− 마지막 교시 빼기</button><button type="button" id="per-days" aria-expanded="false" aria-controls="pd-panel">요일별 교시</button><span class="hint">과목과 시간을 눌러서 바로 고칠 수 있어요</span></div>
       <div class="pd-panel" id="pd-panel" role="dialog" aria-label="요일별 교시" hidden><b>요일마다 몇 교시까지 있나요?</b><div class="pd-days" id="pd-days"></div><div class="pd-note">시간표보다 많은 교시를 고르면 교시가 자동으로 추가돼요. 시간은 시간표에서 눌러서 고쳐 주세요.</div></div>
     </section>
-  </div>
-
-  <div class="col col-r">
-    <section class="card c-praise">
+    <section class="card c-praise" id="w-praise">
       <span class="tape" id="praise-tape">오늘의 칭찬</span><span class="peek-tag">미리 입력 중</span>
       <ul class="items" id="praise"></ul>
       <form class="add" data-list="praise"><input id="praise-in" placeholder="칭찬할 점 적고 Enter" aria-label="칭찬 추가"></form>
     </section>
-    <section class="card c-todo chalk">
+    <section class="card c-todo chalk" id="w-notice">
       <span class="tape" id="todo-tape">오늘의 안내사항</span><span class="peek-tag">미리 입력 중</span>
       <div class="note" id="note" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="안내사항 칠판" data-ph="여기를 눌러 자유롭게 적어 주세요"></div>
       <div class="chalk-bar" id="chalk-bar" role="toolbar" aria-label="글씨 모양">
@@ -629,7 +685,7 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
 <div class="qr-pop" id="km-pop" role="dialog" aria-label="반성 깜지 보관함" hidden>
   <div class="qp-head"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5z" fill="#fff" stroke="#3b3550" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9h8M8 12h8M8 15h5" stroke="#e8203d" stroke-width="1.6" stroke-linecap="round"/><path d="M15 3v4h4" fill="none" stroke="#3b3550" stroke-width="1.6" stroke-linejoin="round"/></svg>반성 깜지</b><button class="cp-x" id="km-x" type="button" aria-label="반성 창 닫기">✕</button></div>
   <div class="qp-body">
-    <div class="km-note" id="km-note" hidden>여기(링크 화면)에서는 인쇄가 막혀 있어요. 인쇄는 바탕화면의 게시판 파일(class-board.html)에서 해 주세요.</div>
+    <div class="km-note" id="km-note" hidden>여기(claude.ai 링크 화면)에서는 인쇄가 막혀 있어요. 바탕화면 게시판 파일이나 공유 사이트에서 인쇄해 주세요.</div>
     <div class="qp-add" id="km-add">
       <button class="qp-pick" id="km-pick" type="button">깜지 파일 넣기</button>
       <div class="qp-noimg" id="km-noimg">PDF·사진을<br>끌어다 놓아도 돼요</div><img class="qp-prev" id="km-prev" alt="고른 깜지 미리보기" hidden>
@@ -698,6 +754,16 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
 <div class="sv" id="sv" role="dialog" aria-label="우리 반 자리" hidden>
   <div class="sv-head"><h2>우리 반 자리<small id="sv-date"></small></h2><button type="button" id="sv-again">다시 보기</button><button type="button" class="sv-close" id="sv-x" aria-label="닫기">✕</button></div>
   <div class="st-area sv-area" id="sv-area"><div class="st-podium">교탁</div></div>
+</div>
+
+<div class="ed-bar" id="ed-bar" role="dialog" aria-label="게시판 설정" hidden>
+  <div class="ed-head"><b>게시판 설정</b><button type="button" class="ed-min" id="ed-min" aria-expanded="true">접기 ▼</button><span class="ed-tip">넣을 요소를 고르고, 칸을 끌어서 옮기거나 오른쪽 아래 모서리를 끌어서 크기를 바꿔요.</span></div>
+  <div class="ed-groups">
+    <div class="ed-group"><span class="ed-lab">게시판</span><div class="ed-chips" id="ed-main"></div></div>
+    <div class="ed-group"><span class="ed-lab">자유게시판</span><div class="ed-chips" id="ed-free"></div><button type="button" class="ed-add" id="ed-free-add">+ 자유게시판 더하기</button></div>
+    <div class="ed-group"><span class="ed-lab">도구</span><div class="ed-chips" id="ed-tools"></div></div>
+  </div>
+  <div class="ed-acts"><button type="button" id="ed-reset">처음 모양으로</button><button type="button" id="ed-cancel">취소</button><button type="button" class="ed-save" id="ed-save">이대로 저장</button></div>
 </div>
 
 <div class="hurry-fx" aria-hidden="true"></div>
@@ -794,6 +860,8 @@ body.hurry-clean #cp-time,body.hurry-timer #t-time{color:#e8203d;animation:hurry
 })();
 (function(){
 const KEY='class-board-v2';
+/* claude.ai 링크 화면(다른 페이지 안에 들어간 화면)에서는 인쇄·내려받기가 막혀요 */
+const IN_FRAME=(()=>{try{return window.top!==window.self}catch(e){return true}})();
 const DAYS=['일','월','화','수','목','금','토'];
 /* kind: class(수업) / break(쉬는 시간, 예비종 울림) / lunch(점심) */
 const DEF={
@@ -1329,7 +1397,7 @@ $('note-clear').addEventListener('click',()=>{
     }finally{busy=false}
   }
   function printPages(it){
-    if(location.protocol!=='file:'){$('km-note').hidden=false}
+    if(IN_FRAME){$('km-note').hidden=false}
     const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');
     f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
     f.srcdoc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(it.t)+'</title><style>@page{margin:8mm}html,body{margin:0}'+
@@ -1435,7 +1503,7 @@ function rosterTemplate(){xlsxLib().then(X=>{const ws=X.utils.aoa_to_sheet([['�
   const paint=()=>document.querySelectorAll('#pk-roster,#st-roster').forEach(el=>el.innerHTML=rosterSummary());
   document.querySelectorAll('.rs-load').forEach(b=>b.addEventListener('click',()=>{owner=b.closest('.rs-bar');fileIn.click()}));
   document.querySelectorAll('.rs-tpl').forEach(b=>b.addEventListener('click',()=>{
-    if(location.protocol!=='file:'){const m=b.closest('.rs-bar').querySelector('.rs-msg');m.textContent='양식 받기는 바탕화면 게시판 파일에서 돼요. 엑셀 첫 줄에 번호·이름·성별을 쓰면 돼요.';return}
+    if(IN_FRAME){const m=b.closest('.rs-bar').querySelector('.rs-msg');m.textContent='양식 받기는 바탕화면 게시판 파일이나 공유 사이트에서 돼요. 엑셀 첫 줄에 번호·이름·성별을 쓰면 돼요.';return}
     rosterTemplate()}));
   fileIn.addEventListener('change',async()=>{
     const f=fileIn.files[0];fileIn.value='';if(!f)return;
@@ -1719,6 +1787,148 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
   $('sv-x').addEventListener('click',close);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sv.hidden)close()});
   document.addEventListener('fullscreenchange',()=>{if(fs&&!document.fullscreenElement&&!sv.hidden){fs=false;close()}});
+})();
+
+/* ===== 게시판 설정: 요소 고르기 · 옮기기 · 크기 바꾸기 · 저장 ===== */
+(function(){
+  const board=$('board'),bar=$('ed-bar');
+  const TOOLS=[['clean','clean-btn','청소 시간','#dcf6ec'],['timer','timer-btn','타이머','#fff0de'],['notice','notice-btn','알림장','#e2f1fc'],['qr','qr-btn','QR코드','#efe8ff'],
+    ['km','km-btn','반성','#ffe3e3'],['pk','pk-btn','학생 뽑기','#e6fadc'],['st','st-btn','자리 배치','#e2f1fc'],['sv','sv-btn','자리 뽑기','#fff7cf']];
+  const MAIN=[['clock','clock','시계'],['plan','w-plan','시간표'],['praise','w-praise','칭찬 게시판'],['notice','w-notice','안내사항(칠판)']];
+  /* 기본 배치 = 지금까지의 모양 (보드 안에서 % 위치) */
+  const DEFAULT=[{w:'clock',x:0,y:1.5,ww:60.6,hh:52},{w:'plan',x:0,y:57,ww:60.6,hh:43},{w:'praise',x:61.8,y:1.5,ww:38.2,hh:47},{w:'notice',x:61.8,y:52,ww:38.2,hh:48}];
+  if(!Array.isArray(S.layout)||!S.layout.length)S.layout=JSON.parse(JSON.stringify(DEFAULT));
+  if(!S.free||typeof S.free!=='object')S.free={};
+  let editing=false,work=null,backup=null;
+  const nameOf=w=>{const m=MAIN.find(x=>x[0]===w);if(m)return m[2];if(w.startsWith('tool:')){const t=TOOLS.find(x=>'tool:'+x[0]===w);return t?t[2]:w}
+    if(w.startsWith('free:'))return (S.free[w.slice(5)]||{}).t||'자유게시판';return w};
+  const elFor=w=>{const m=MAIN.find(x=>x[0]===w);if(m)return $(m[1]);return board.querySelector(`[data-wid="${CSS.escape(w)}"]`)};
+  function makeFree(id){
+    const sec=document.createElement('section');sec.className='card c-free';sec.dataset.wid='free:'+id;
+    sec.innerHTML='<span class="tape fr-title"></span><div class="fr-body" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" data-ph="자유롭게 적어 주세요"></div>';
+    const f=S.free[id]||(S.free[id]={t:'자유게시판',html:''});
+    sec.querySelector('.fr-title').textContent=f.t;sec.querySelector('.fr-body').innerHTML=f.html||'';
+    sec.querySelector('.fr-body').setAttribute('aria-label',f.t);
+    sec.querySelector('.fr-body').addEventListener('input',e=>{f.html=e.target.innerHTML;save()});
+    board.appendChild(sec);return sec;
+  }
+  function makeTool(k){
+    const t=TOOLS.find(x=>x[0]===k);if(!t)return null;
+    const sec=document.createElement('section');sec.className='card c-tool';sec.dataset.wid='tool:'+k;sec.style.setProperty('--tl-bg',t[3]);
+    const svg=$(t[1]).querySelector('svg');
+    sec.innerHTML=`<button type="button" class="tl-go">${svg?svg.outerHTML:''}<span>${t[2]}</span><span class="tl-live"></span></button>`;
+    sec.querySelector('.tl-go').addEventListener('click',()=>{if(!editing)$(t[1]).click()});
+    board.appendChild(sec);return sec;
+  }
+  function ensure(w){let el=elFor(w);if(el)return el;
+    if(w.startsWith('free:'))return makeFree(w.slice(5));if(w.startsWith('tool:'))return makeTool(w.slice(5));return null}
+  function apply(list){
+    const on=new Set(list.map(i=>i.w));
+    MAIN.forEach(([w,id])=>{$(id).hidden=!on.has(w)});
+    board.querySelectorAll('[data-wid]').forEach(el=>{if(!on.has(el.dataset.wid))el.remove()});
+    list.forEach((it,i)=>{const el=ensure(it.w);if(!el)return;el.hidden=false;
+      Object.assign(el.style,{left:it.x+'%',top:it.y+'%',width:it.ww+'%',height:it.hh+'%',zIndex:String(i+1)})});
+    board.querySelectorAll('.fr-title').forEach(t=>{const id=t.closest('[data-wid]').dataset.wid.slice(5);t.textContent=(S.free[id]||{}).t||'자유게시판'});
+    if(editing)covers();
+    try{renderPlan()}catch(e){}
+  }
+  /* 도구 칸에 돌아가는 타이머 남은 시간 */
+  setInterval(()=>{board.querySelectorAll('.c-tool').forEach(sec=>{const k=sec.dataset.wid.slice(5),t=TOOLS.find(x=>x[0]===k),b=t&&$(t[1]),lv=sec.querySelector('.tl-live');
+    const txt=b&&b.classList.contains('running')?b.textContent.trim().replace(/^[^0-9]*/,''):'';if(lv.textContent!==txt)lv.textContent=txt})},500);
+
+  /* --- 편집 모드 --- */
+  function covers(){
+    board.querySelectorAll('.ed-cover').forEach(c=>c.remove());
+    work.forEach(it=>{const el=elFor(it.w);if(!el)return;
+      const c=document.createElement('div');c.className='ed-cover';c.dataset.w=it.w;
+      c.innerHTML=`<span class="ed-name"></span><span class="ed-size"></span><button type="button" class="ed-x" aria-label="이 칸 빼기">✕</button><span class="ed-grip" aria-hidden="true"></span>`;
+      c.querySelector('.ed-name').textContent=nameOf(it.w);c.querySelector('.ed-size').textContent=`${Math.round(it.ww)} × ${Math.round(it.hh)}`;
+      el.appendChild(c)});
+  }
+  function chips(){
+    const has=w=>work.some(i=>i.w===w);
+    $('ed-main').innerHTML=MAIN.map(([w,,n])=>`<button type="button" class="ed-chip" data-w="${w}" aria-pressed="${has(w)}">${n}</button>`).join('');
+    $('ed-tools').innerHTML=TOOLS.map(([k,,n])=>`<button type="button" class="ed-chip" data-w="tool:${k}" aria-pressed="${has('tool:'+k)}">${n}</button>`).join('');
+    const ids=Object.keys(S.free);
+    $('ed-free').innerHTML=ids.length?ids.map(id=>`<span class="ed-free"><input data-id="${id}" value="${esc(S.free[id].t)}" maxlength="20" aria-label="자유게시판 이름"><button type="button" class="ed-chip" data-w="free:${id}" aria-pressed="${has('free:'+id)}">${has('free:'+id)?'보임':'숨김'}</button><button type="button" data-del="${id}" aria-label="이 자유게시판 지우기">🗑</button></span>`).join(''):'<span class="ed-tip">아직 없어요</span>';
+  }
+  /* 새 칸은 비어 있는 곳을 찾아서 놓아요 */
+  function spot(ww,hh){
+    for(let y=0;y<=100-hh;y+=5)for(let x=0;x<=100-ww;x+=5){
+      if(!work.some(i=>x<i.x+i.ww&&x+ww>i.x&&y<i.y+i.hh&&y+hh>i.y))return[x,y]}
+    return[(100-ww)/2,(100-hh)/2];
+  }
+  function toggle(w){
+    const i=work.findIndex(x=>x.w===w);
+    if(i>=0)work.splice(i,1);
+    else{const tool=w.startsWith('tool:'),ww=tool?16:30,hh=tool?22:40,[x,y]=spot(ww,hh);work.push({w,x,y,ww,hh})}
+    apply(work);chips();
+  }
+  bar.addEventListener('click',e=>{
+    const c=e.target.closest('.ed-chip');if(c){toggle(c.dataset.w);return}
+    const d=e.target.closest('[data-del]');if(d){const id=d.dataset.del;work=work.filter(x=>x.w!=='free:'+id);delete S.free[id];apply(work);chips();return}
+  });
+  bar.addEventListener('input',e=>{const inp=e.target.closest('input[data-id]');if(!inp)return;S.free[inp.dataset.id].t=inp.value||'자유게시판';
+    board.querySelectorAll(`[data-wid="free:${inp.dataset.id}"] .fr-title`).forEach(t=>t.textContent=S.free[inp.dataset.id].t);
+    board.querySelectorAll(`.ed-cover[data-w="free:${inp.dataset.id}"] .ed-name`).forEach(t=>t.textContent=S.free[inp.dataset.id].t)});
+  $('ed-min').addEventListener('click',()=>{const m=bar.classList.toggle('min');$('ed-min').textContent=m?'펼치기 ▲':'접기 ▼';$('ed-min').setAttribute('aria-expanded',!m)});
+  $('ed-free-add').addEventListener('click',()=>{const id=Date.now().toString(36);S.free[id]={t:'자유게시판',html:''};toggle('free:'+id)});
+  const reset=$('ed-reset');let rt=null;
+  reset.addEventListener('click',()=>{if(!reset.classList.contains('sure')){reset.classList.add('sure');reset.textContent='한 번 더 누르면 처음 모양';rt=setTimeout(()=>{reset.classList.remove('sure');reset.textContent='처음 모양으로'},2500);return}
+    clearTimeout(rt);reset.classList.remove('sure');reset.textContent='처음 모양으로';work=JSON.parse(JSON.stringify(DEFAULT));apply(work);chips()});
+  function start(){
+    if(editing)return;editing=true;backup={layout:JSON.parse(JSON.stringify(S.layout)),free:JSON.parse(JSON.stringify(S.free))};
+    work=JSON.parse(JSON.stringify(S.layout));document.body.classList.add('editing');bar.hidden=false;chips();apply(work);
+  }
+  function stop(){editing=false;document.body.classList.remove('editing');bar.hidden=true;board.querySelectorAll('.ed-cover').forEach(c=>c.remove())}
+  $('set-btn').addEventListener('click',()=>editing?null:start());
+  $('ed-cancel').addEventListener('click',()=>{S.layout=backup.layout;S.free=backup.free;stop();apply(S.layout)});
+  $('ed-save').addEventListener('click',()=>{S.layout=work.map(i=>({...i}));save();stop();apply(S.layout)});
+  /* 끌어서 옮기기 · 오른쪽 아래 모서리로 크기 바꾸기 (5% 칸에 맞춰요) */
+  let dg=null;const snap=v=>Math.round(v*2)/2;
+  board.addEventListener('pointerdown',e=>{
+    const c=e.target.closest('.ed-cover');if(!c)return;const it=work.find(x=>x.w===c.dataset.w);if(!it)return;
+    if(e.target.closest('.ed-x')){toggle(it.w);return}
+    e.preventDefault();const r=board.getBoundingClientRect();
+    /* 누른 칸은 맨 위로 */
+    work.splice(work.indexOf(it),1);work.push(it);elFor(it.w).style.zIndex=String(work.length+5);
+    dg={it,c,mode:e.target.closest('.ed-grip')?'size':'move',sx:e.clientX,sy:e.clientY,o:{...it},R:r};c.setPointerCapture(e.pointerId);
+  });
+  board.addEventListener('pointermove',e=>{
+    if(!dg)return;const {it,o,R}=dg,dx=(e.clientX-dg.sx)/R.width*100,dy=(e.clientY-dg.sy)/R.height*100;
+    if(dg.mode==='move'){it.x=snap(Math.min(100-it.ww,Math.max(0,o.x+dx)));it.y=snap(Math.min(100-it.hh,Math.max(0,o.y+dy)))}
+    else{it.ww=snap(Math.min(100-it.x,Math.max(10,o.ww+dx)));it.hh=snap(Math.min(100-it.y,Math.max(10,o.hh+dy)))}
+    const el=elFor(it.w);Object.assign(el.style,{left:it.x+'%',top:it.y+'%',width:it.ww+'%',height:it.hh+'%'});
+    dg.c.querySelector('.ed-size').textContent=`${Math.round(it.ww)} × ${Math.round(it.hh)}`;
+  });
+  board.addEventListener('pointerup',()=>{if(dg){dg=null;try{renderPlan()}catch(e){}}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&editing)$('ed-cancel').click()});
+  apply(S.layout);
+})();
+
+/* ===== 도구 창 크기 바꾸기 (오른쪽 아래 모서리를 끌어요, 두 번 누르면 처음 크기) ===== */
+(function(){
+  if(!S.popSize||typeof S.popSize!=='object')S.popSize={};
+  /* 청소·타이머 창은 글씨까지 같이 커지고, 나머지 창은 창 크기만 바뀌어요 */
+  const LIST=[['clean-pop','zoom'],['timer-pop','zoom'],['qr-pop','box'],['km-pop','box'],['pk-pop','box'],['st-pop','box']];
+  LIST.forEach(([id,kind])=>{
+    const pop=$(id);if(!pop)return;
+    const g=document.createElement('div');g.className='pop-grip';g.title='끌어서 창 크기 바꾸기 (두 번 누르면 처음 크기)';g.setAttribute('aria-hidden','true');pop.appendChild(g);
+    const put=v=>{if(kind==='zoom'){pop.style.zoom=v?String(v.z):''}else{pop.style.width=v?v.w+'px':'';pop.style.height=v?v.h+'px':'';pop.style.maxHeight=v?'none':''}};
+    put(S.popSize[id]);
+    let st=null;
+    g.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();const r=pop.getBoundingClientRect();
+      st={x:e.clientX,y:e.clientY,w:r.width,h:r.height,z:parseFloat(pop.style.zoom)||1,l:r.left,t:r.top};g.setPointerCapture(e.pointerId)});
+    g.addEventListener('pointermove',e=>{if(!st)return;
+      /* 화면 오른쪽 끝에 닿으면 창을 왼쪽으로 밀면서 키워요 */
+      if(kind==='zoom'){const nw=Math.max(st.w*.5,Math.min(innerWidth-16,st.w+e.clientX-st.x)),z=Math.max(.6,Math.min(2.4,st.z*nw/st.w)),W=st.w*z/st.z;
+        const L=Math.max(8,Math.min(st.l,innerWidth-8-W));pop.style.right='auto';pop.style.left=(L/z)+'px';pop.style.top=(st.t/z)+'px';pop.style.zoom=String(z);S.popSize[id]={z}}
+      else{const w=Math.max(360,Math.min(innerWidth-16,st.w+e.clientX-st.x)),h=Math.max(260,Math.min(innerHeight-st.t-8,st.h+e.clientY-st.y));
+        const L=Math.max(8,Math.min(st.l,innerWidth-8-w));pop.style.right='auto';pop.style.left=L+'px';
+        pop.style.width=w+'px';pop.style.height=h+'px';pop.style.maxHeight='none';S.popSize[id]={w,h}}});
+    g.addEventListener('pointerup',()=>{if(st){st=null;save()}});
+    g.addEventListener('dblclick',()=>{delete S.popSize[id];put(null);save()});
+  });
 })();
 
 /* 짧은 사이렌: 위잉-위잉 두 번 (약 1.6초) */
