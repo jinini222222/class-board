@@ -430,6 +430,15 @@ body.editing .board{background-image:linear-gradient(rgba(90,169,230,.12) 1px,tr
   background:linear-gradient(135deg,transparent 50%,rgba(90,169,230,.25) 50%);border-bottom-right-radius:20px}
 .pop-grip::after{content:"";position:absolute;right:8px;bottom:8px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 4px,var(--soft) 4px 6px);clip-path:polygon(100% 0,100% 100%,0 100%)}
 
+.c-tool.has-dock{padding:0!important;overflow:hidden;background:transparent;box-shadow:none}
+.docked{position:absolute!important;inset:0!important;left:0!important;top:0!important;right:auto!important;width:100%!important;height:100%!important;max-height:none!important;
+  transform:none!important;margin:0;box-shadow:0 6px 0 rgba(59,53,80,.08),0 12px 24px rgba(59,53,80,.08)!important;z-index:1!important;border-width:3px!important}
+.docked:not(.docked-z){zoom:1!important}
+.docked.docked-z{width:660px!important;height:auto!important}
+.docked .cp-x,.docked .sv-close,.docked .pop-grip,.docked .np-grip{display:none!important}
+.docked .cp-head,.docked .np-head,.docked .qp-head{cursor:default}
+.sv.docked{border:3px solid var(--ink);border-radius:18px;overflow:hidden}
+
 /* 출결 체크 */
 .at-btn{background:#dff5f2}
 #at-pop{width:min(1180px,calc(100vw - 32px));height:min(calc(100vh - 100px),860px);left:max(16px,calc(50vw - 590px))}
@@ -1997,17 +2006,45 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
   function makeTool(k){
     const t=TOOLS.find(x=>x[0]===k);if(!t)return null;
     const sec=document.createElement('section');sec.className='card c-tool';sec.dataset.wid='tool:'+k;sec.style.setProperty('--tl-bg',t[3]);
-    const svg=$(t[1]).querySelector('svg');
-    sec.innerHTML=`<button type="button" class="tl-go">${svg?svg.outerHTML:''}<span>${t[2]}</span><span class="tl-live"></span></button>`;
-    sec.querySelector('.tl-go').addEventListener('click',()=>{if(!editing)$(t[1]).click()});
-    board.appendChild(sec);return sec;
+    sec.classList.add('has-dock');board.appendChild(sec);dock(k,sec);return sec;
   }
+  /* 도구 창을 게시판 칸 안에 그대로 붙여요 (버튼을 한 번 더 누를 필요 없이 바로 사용) */
+  const POPS={clean:'clean-pop',timer:'timer-pop',notice:'notice-pop',qr:'qr-pop',km:'km-pop',pk:'pk-pop',st:'st-pop',sv:'sv',at:'at-pop'};
+  const ZOOMED={clean:1,timer:1};
+  const watch=new MutationObserver(ms=>ms.forEach(m=>{const el=m.target;if(el.classList.contains('docked')&&el.hidden)el.hidden=false}));
+  const fits=new Map();
+  function dock(k,sec){
+    const pop=$(POPS[k]);if(!pop)return;
+    if(pop.parentElement!==document.body&&pop.classList.contains('docked'))return;
+    if(k==='sv'){pop.hidden=false}
+    else if(pop.hidden){const t=TOOLS.find(x=>x[0]===k);$(t[1]).click()}   /* 처음 열 때 하는 준비를 그대로 해요 */
+    pop.classList.add('docked');if(ZOOMED[k])pop.classList.add('docked-z');
+    sec.appendChild(pop);pop.hidden=false;
+    watch.observe(pop,{attributes:true,attributeFilter:['hidden']});
+    if(k==='sv')setTimeout(()=>{try{$('sv-again').click()}catch(e){}},80);
+    if(ZOOMED[k]){
+      /* 청소·타이머 창은 칸 크기에 맞춰 통째로 커지고 작아져요 */
+      const ro=new ResizeObserver(()=>{pop.style.zoom='1';const h=pop.offsetHeight||1,cw=sec.clientWidth,ch=sec.clientHeight;
+        const z=Math.max(.25,Math.min(cw/660,ch/h));pop.style.zoom=String(z);pop.style.marginLeft=Math.max(0,(cw-660*z)/2/z)+'px'});
+      ro.observe(sec);fits.set(pop,ro);
+    }
+  }
+  function undock(sec){
+    const pop=sec.querySelector('.docked');if(!pop)return;
+    const ro=fits.get(pop);if(ro){ro.disconnect();fits.delete(pop)}
+    pop.classList.remove('docked','docked-z');pop.style.zoom='';pop.style.marginLeft='';
+    const sz=(S.popSize||{})[pop.id];if(sz&&sz.z)pop.style.zoom=String(sz.z);
+    pop.hidden=true;document.body.appendChild(pop);
+  }
+  /* 도구함에서 붙여 둔 도구를 누르면 게시판의 그 칸을 반짝 알려줘요 */
+  TOOLS.forEach(([k,btn])=>{$(btn).addEventListener('click',()=>{const sec=board.querySelector(`[data-wid="tool:${k}"]`);
+    if(sec&&!sec.hidden)sec.animate([{boxShadow:'0 0 0 0 rgba(90,169,230,.9)'},{boxShadow:'0 0 0 14px rgba(90,169,230,0)'}],{duration:700,iterations:2})},true)});
   function ensure(w){let el=elFor(w);if(el)return el;
     if(w.startsWith('free:'))return makeFree(w.slice(5));if(w.startsWith('tool:'))return makeTool(w.slice(5));return null}
   function apply(list){
     const on=new Set(list.map(i=>i.w));
     MAIN.forEach(([w,id])=>{$(id).hidden=!on.has(w)});
-    board.querySelectorAll('[data-wid]').forEach(el=>{if(!on.has(el.dataset.wid))el.remove()});
+    board.querySelectorAll('[data-wid]').forEach(el=>{if(!on.has(el.dataset.wid)){undock(el);el.remove()}});
     list.forEach((it,i)=>{const el=ensure(it.w);if(!el)return;el.hidden=false;
       Object.assign(el.style,{left:it.x+'%',top:it.y+'%',width:it.ww+'%',height:it.hh+'%',zIndex:String(i+1)})});
     board.querySelectorAll('.fr-title').forEach(t=>{const id=t.closest('[data-wid]').dataset.wid.slice(5);t.textContent=(S.free[id]||{}).t||'자유게시판'});
@@ -2015,8 +2052,7 @@ function fanfare(){if(!soundOn||!actx||actx.state!=='running'||!master)return;co
     try{renderPlan()}catch(e){}
   }
   /* 도구 칸에 돌아가는 타이머 남은 시간 */
-  setInterval(()=>{board.querySelectorAll('.c-tool').forEach(sec=>{const k=sec.dataset.wid.slice(5),t=TOOLS.find(x=>x[0]===k),b=t&&$(t[1]),lv=sec.querySelector('.tl-live');
-    const txt=b&&b.classList.contains('running')?b.textContent.trim().replace(/^[^0-9]*/,''):'';if(lv.textContent!==txt)lv.textContent=txt})},500);
+  /* (도구 칸은 이제 도구 창이 통째로 들어가서 따로 남은 시간 표시가 필요 없어요) */
 
   /* --- 편집 모드 --- */
   function covers(){
